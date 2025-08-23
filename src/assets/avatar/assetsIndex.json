@@ -1,0 +1,69 @@
+{
+  "body": {
+    "female": {
+      "body": {
+        "light": "assets/avatar/selection/body/female_body_light.png"
+      }
+    },
+    "male": {
+      "body": {
+        "light": "assets/avatar/selection/body/male_body_light.png"
+      }
+    }
+  },
+  "hair": {
+    "unisex": {
+      "hair": {
+        "white": "assets/avatar/selection/hair/unisex_hair_white.png"
+      }
+    }
+  },
+  "head": {
+    "female": {
+      "head": {
+        "light": "assets/avatar/selection/head/female_head_light.png"
+      }
+    },
+    "male": {
+      "head": {
+        "light": "assets/avatar/selection/head/male_head_light.png"
+      }
+    }
+  },
+  "pants": {
+    "female": {
+      "shorts": {
+        "white": "assets/avatar/selection/pants/female_shorts_white.png"
+      }
+    },
+    "male": {
+      "shorts": {
+        "white": "assets/avatar/selection/pants/male_shorts_white.png"
+      }
+    }
+  },
+  "shirt": {
+    "female": {
+      "clothes_long_sleeve": {
+        "white": "assets/avatar/selection/shirt/female_clothes_long_sleeve_white.png"
+      }
+    },
+    "male": {
+      "clothes_long_sleeve": {
+        "white": "assets/avatar/selection/shirt/male_clothes_long_sleeve_white.png"
+      }
+    }
+  },
+  "shoes": {
+    "female": {
+      "basic_shoes": {
+        "white": "assets/avatar/selection/shoes/female_basic_shoes_white.png"
+      }
+    },
+    "male": {
+      "basic_shoes": {
+        "white": "assets/avatar/selection/shoes/male_basic_shoes_white.png"
+      }
+    }
+  }
+}
