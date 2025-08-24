@@ -2,7 +2,7 @@
 import {Application, extend} from "@pixi/react"
 import {PropsWithChildren, Ref, RefObject, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Assets, Container, Sprite, Texture, TextureSource} from "pixi.js";
-import backgroundAsset from "../../../assets/container.png"
+import backgroundAsset from "../../../../public/builder_bg.png"
 import {MyAvatar} from "@/components/avatar/avatar";
 import {AvatarPart, ComponentTexture} from "@/app/avatar/types";
 

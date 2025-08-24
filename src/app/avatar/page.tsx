@@ -155,7 +155,7 @@ export default function AvatarCustomizer() {
         <div className="relative h-[100vh] w-[100vw]">
 
             {/* Canvas fills the background */}
-            <div ref={canvasContainerRef} className="h-full w-full">
+            <div ref={canvasContainerRef} className="h-full w-[100vw]">
                 <MainCanvas parentNode={canvasContainerRef}
                             avatarPartFileName={partFileName}
                             show={show}

@@ -1,0 +1,7 @@
+services:
+  web:
+    image: charmflex/life-metaverse:latest
+    ports:
+      - "3081:3000"
+    environment:
+      - NODE_ENV=production
