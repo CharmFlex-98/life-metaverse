@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: charmflex/life-metaverse-client:latest
+  IMAGE_NAME: charmflex/life-metaverse:latest
 
 jobs:
   build-and-deploy:
