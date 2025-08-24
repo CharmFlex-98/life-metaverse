@@ -5,12 +5,11 @@ import {useMemo} from "react";
 
 
 interface IAvatarProps {
-    texture: Texture,
     partTexture: PartTexture
     position: { x: number, y: number },
 }
 
-export const MyAvatar = ({texture, partTexture, position}: IAvatarProps) => {
+export const MyAvatar = ({partTexture, position}: IAvatarProps) => {
 
     const {sprites, updateAnimation} = useAvatarAnimation({
         partsTexture: partTexture,

@@ -11,16 +11,16 @@ export type AvatarPart =
 export type AvatarGender = "male" | "female" | "unisex"
 
 export interface PartTexture {
-    hair?: Texture | any
-    head?: Texture | any
-    body?: Texture | any
-    shirt?: Texture | any
-    pants?: Texture | any
-    shoes?: Texture | any
+    hair?: Texture
+    head?: Texture
+    body?: Texture
+    shirt?: Texture
+    pants?: Texture
+    shoes?: Texture
 }
 
 export interface BackgroundTexture {
-    background?: Texture | any
+    background?: Texture
 }
 
 export type ComponentTexture = PartTexture & BackgroundTexture

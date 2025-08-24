@@ -79,7 +79,6 @@ function MainCanvas({parentNode, avatarPartFileName, show = false, children}: Pr
                         height={parentNode.current?.clientHeight}
                     />
                     <MyAvatar
-                        texture={component.background}
                         partTexture={{
                             hair: component.hair,
                             head: component.head,

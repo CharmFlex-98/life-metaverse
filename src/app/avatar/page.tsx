@@ -121,9 +121,9 @@ export default function AvatarCustomizer() {
     }, [gender]);
 
 
-    const handleSelection = useCallback((key: AvatarPart, partInfo: AvatarPartInfo) => {
+    const handleSelection = (key: AvatarPart, partInfo: AvatarPartInfo) => {
         setSelectedParts((prev) => ({...prev, [key]: partInfo}))
-    }, [])
+    }
 
     // Map over parts instead of repeating JSX
     const selectors = useMemo(() => {
