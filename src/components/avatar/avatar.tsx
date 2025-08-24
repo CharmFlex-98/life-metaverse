@@ -1,7 +1,8 @@
 import {ColorMatrixFilter, Texture} from "pixi.js";
 import {useTick} from "@pixi/react";
-import {PartTexture, useAvatarAnimation} from "@/components/avatar/useAvatarAnimation";
+import { useAvatarAnimation} from "@/components/avatar/useAvatarAnimation";
 import {useMemo} from "react";
+import {PartTexture} from "@/app/avatar/types";
 
 
 interface IAvatarProps {
