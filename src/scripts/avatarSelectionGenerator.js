@@ -83,7 +83,7 @@ function buildIndex() {
         if (!assetsIndex[part][gender][itemName]) assetsIndex[part][gender][itemName] = {};
 
         // Save final cropped path prefixed for loader usage
-        assetsIndex[part][gender][itemName][color] = `${avatarSelectionAssetLoaderPrefix}/${cleanPath}`;
+        assetsIndex[part][gender][itemName][color] = cleanPath;
       }
     });
   }

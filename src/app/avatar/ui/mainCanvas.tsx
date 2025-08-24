@@ -4,7 +4,7 @@ import {PropsWithChildren, Ref, RefObject, useCallback, useEffect, useMemo, useR
 import {Assets, Container, Sprite, Texture, TextureSource} from "pixi.js";
 import backgroundAsset from "../../../assets/container.png"
 import {MyAvatar} from "@/components/avatar/avatar";
-import {Parts} from "@/components/avatar/useAvatarAnimation";
+import {AvatarPart, ComponentTexture} from "@/app/avatar/types";
 
 
 extend({
@@ -13,52 +13,48 @@ extend({
     Texture
 })
 
+export type AvatarPartUrlMap = Partial<Record<AvatarPart, string>>
+
+
 interface IMainCanvasProps {
     parentNode: RefObject<HTMLDivElement | null>
-    avatarPartFileName: Partial<Record<Parts, string>>
+    avatarPartFileName: AvatarPartUrlMap,
+    show: boolean
 }
 
-function MainCanvas({parentNode, avatarPartFileName, children}: PropsWithChildren<IMainCanvasProps>) {
+function MainCanvas({parentNode, avatarPartFileName, show = false, children}: PropsWithChildren<IMainCanvasProps>) {
 
-    const [bg, setBg] = useState<any | null>(null);
-    const [avatarTexture, setAvatarTexture] = useState<any | null>(null)
+    const [component, setComponent] = useState<ComponentTexture>({});
 
-    const [hairTexture, setHairTexture] = useState<any>(null);
-    const [headTexture, setHeadTexture] = useState<any>(null);
-    const [bodyTexture, setBodyTexture] = useState<any>(null);
-    const [shirtTexture, setShirtTexture] = useState<any>(null);
-    const [pantsTexture, setPantsTexture] = useState<any>(null);
-    const [shoesTexture, setShoesTexture] = useState<any>(null);
 
     useEffect(() => {
         Assets.load(backgroundAsset).then((loaded) => {
-            console.log("set bg")
-            setBg(loaded)
+            setComponent((res) => ({...res, background: loaded}))
         })
 
         const prefix = "/assets/avatar/animation/"
 
-        console.log("refresh: " + JSON.stringify(avatarPartFileName))
-
         // Assets.load will use app router path. e.g, this page is /avatar, then will load "avatar/{name}"
         avatarPartFileName.hair ? Assets.load(`${prefix}${avatarPartFileName.hair}`).then((res) => {
-            setHairTexture(res)
-        }) : setHairTexture(null)
+            setComponent((prev) => ({...prev, hair: res}))
+        }) : setComponent((prev) => ({...prev, hair: undefined}))
         avatarPartFileName.head ? Assets.load(`${prefix}${avatarPartFileName.head}`).then((res) => {
-            setHeadTexture(res)
-        }) : setHeadTexture(null)
+            setComponent((prev) => {
+                return {...prev, head: res}
+            })
+        }) : setComponent((prev) => ({...prev, head: undefined}))
         avatarPartFileName.body ? Assets.load(`${prefix}${avatarPartFileName.body}`).then((res) => {
-            setBodyTexture(res)
-        }) : setBodyTexture(null)
+            setComponent((prev) => ({...prev, body: res}))
+        }) : setComponent((prev) => ({...prev, body: undefined}))
         avatarPartFileName.pants ? Assets.load(`${prefix}${avatarPartFileName.pants}`).then((res) => {
-            setPantsTexture(res)
-        }) : setPantsTexture(null)
+            setComponent((prev) => ({...prev, pants: res}))
+        }) : setComponent((prev) => ({...prev, pants: undefined}))
         avatarPartFileName.shirt ? Assets.load(`${prefix}${avatarPartFileName.shirt}`).then((res) => {
-            setShirtTexture(res)
-        }) : setShirtTexture(null)
+            setComponent((prev) => ({...prev, shirt: res}))
+        }) : setComponent((prev) => ({...prev, shirt: undefined}))
         avatarPartFileName.shoes ? Assets.load(`${prefix}${avatarPartFileName.shoes}`).then((res) => {
-            setShoesTexture(res)
-        }) : setShoesTexture(null)
+            setComponent((prev) => ({...prev, shoes: res}))
+        }) : setComponent((prev) => ({...prev, shoes: undefined}))
 
     }, [avatarPartFileName]);
 
@@ -70,31 +66,32 @@ function MainCanvas({parentNode, avatarPartFileName, children}: PropsWithChildre
         avatarPosition = {x: 0, y: 0}
     }
 
-    console.log("load")
 
     return (
         <Application resizeTo={parentNode}>
-            <pixiContainer>
-                <pixiSprite
-                    // ref={spriteRef}
-                    anchor={{x: 0, y: 0}}
-                    eventMode={'static'}
-                    texture={bg}
-                    width={parentNode.current?.clientWidth}
-                    height={parentNode.current?.clientHeight}
-                />
-                <MyAvatar
-                    texture={avatarTexture}
-                    partTexture={{
-                        hair: hairTexture,
-                        head: headTexture,
-                        body: bodyTexture,
-                        shirt: shirtTexture,
-                        pants: pantsTexture,
-                        shoes: shoesTexture,
-                    }}
-                    position={avatarPosition}/>
-            </pixiContainer>
+            {show && (
+                <pixiContainer>
+                    <pixiSprite
+                        anchor={{x: 0, y: 0}}
+                        eventMode={'static'}
+                        texture={component.background}
+                        width={parentNode.current?.clientWidth}
+                        height={parentNode.current?.clientHeight}
+                    />
+                    <MyAvatar
+                        texture={component.background}
+                        partTexture={{
+                            hair: component.hair,
+                            head: component.head,
+                            body: component.body,
+                            shirt: component.shirt,
+                            pants: component.pants,
+                            shoes: component.shoes,
+                        }}
+                        position={avatarPosition}/>
+                </pixiContainer>
+            )
+            }
         </Application>
     )
 }

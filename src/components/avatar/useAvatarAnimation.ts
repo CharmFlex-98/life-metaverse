@@ -1,16 +1,8 @@
 import {ColorMatrixFilter, Rectangle, Sprite, Texture} from "pixi.js";
 import {useRef, useState} from "react";
+import {AvatarPart, PartTexture} from "@/app/avatar/types";
 
-export type Parts = keyof PartTexture
 
-export interface PartTexture {
-    hair?: Texture
-    head: Texture
-    body: Texture
-    shirt?: Texture
-    pants?: Texture
-    shoes?: Texture
-}
 
 interface SpriteInfo {
     sprite: Sprite
@@ -72,9 +64,9 @@ export const useAvatarAnimation = ({
 
         frameCount.current += 1
 
-        const res: Partial<Record<Parts, SpriteInfo>> = {}
+        const res: Partial<Record<AvatarPart, SpriteInfo>> = {}
 
-        const parts = Object.keys(partsTexture) as Parts[]
+        const parts = Object.keys(partsTexture) as AvatarPart[]
         parts.forEach((part) => {
             const texture = partsTexture[part]
             if (texture) {
