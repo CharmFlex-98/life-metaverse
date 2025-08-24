@@ -45,6 +45,6 @@ jobs:
         passphrase: ${{ secrets.SERVER_SSH_PW }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: |
-          cd servers/tlv_server
+          cd servers/life-metaverse
           docker compose pull
           docker compose up -d
