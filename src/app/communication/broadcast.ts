@@ -7,7 +7,7 @@ export type ConnectionState = "disconnected" | "connecting" | "connected" | "err
 interface StompClient {
     client: Client;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
-    publish: (destination: string, body: JsonValue) => boolean;
+    publish: (destination: string, body: unknown) => boolean;
     connect: () => void;
     disconnect: () => void;
     onConnectionChange: (listener: (state: ConnectionState) => void) => () => void;
@@ -77,7 +77,7 @@ const createStompClient = (): StompClient => {
         return () => subscription.unsubscribe();
     };
 
-    const publish = (destination: string, body: JsonValue): boolean => {
+    const publish = (destination: string, body: unknown): boolean => {
         if (!clientInstance || connectionState !== "connected") {
             console.warn("Cannot publish - client not connected");
             return false;
