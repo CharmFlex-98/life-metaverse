@@ -37,7 +37,7 @@ jobs:
         passphrase: ${{ secrets.SERVER_SSH_PW }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         source: "docker-compose.yml"
-        target: "servers/tlv_server/"
+        target: "servers/life-metaverse/"
 
     - name: pull image and deploy
       uses: appleboy/ssh-action@v1.0.0
