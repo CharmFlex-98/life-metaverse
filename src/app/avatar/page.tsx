@@ -112,7 +112,7 @@ export default function AvatarCustomizer() {
     const { completed, progress } = usePreloadAssets()
 
 
-    let num = useRef(1)
+    const num = useRef(1)
 
     /*Initialize STOMP server*/
     useEffect(() => {
