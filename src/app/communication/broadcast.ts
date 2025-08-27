@@ -76,7 +76,7 @@ const createStompClient = (): StompClient => {
         return () => subscription.unsubscribe();
     };
 
-    const publish = (destination: string, body: any): boolean => {
+    const publish = (destination: string, body: {}): boolean => {
         if (!clientInstance || connectionState !== "connected") {
             console.warn("Cannot publish - client not connected");
             return false;

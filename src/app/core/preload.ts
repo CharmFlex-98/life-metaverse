@@ -41,7 +41,7 @@ export const usePreloadAssets = () => {
             });
         };
 
-        const tasks: Promise<any>[] = [
+        const tasks: Promise<void>[] = [
             ...animationPaths.map((p) => Assets.load(p)),
             ...selectionPaths.map((p) => preloadImage(p)),
         ];

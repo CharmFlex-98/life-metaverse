@@ -47,7 +47,7 @@ function MainCanvas({
             shoes: avatarBuilderPartFileName.shoes,
             shirt: avatarBuilderPartFileName.shirt,
         }
-        const tasks: Promise<any>[] = []
+        const tasks: Promise<void>[] = []
 
         // always load background
         tasks.push(
@@ -84,7 +84,7 @@ function MainCanvas({
         avatarCreated.forEach((avatar) => {
             if (avatarRenderInfo[avatar.name]) return
 
-            const avatarTasks: Promise<any>[] = [];
+            const avatarTasks: Promise<void>[] = [];
             const avatarTextures: PartTexture = {};
 
             Object.entries(avatar).forEach(([part, fileName]) => {
