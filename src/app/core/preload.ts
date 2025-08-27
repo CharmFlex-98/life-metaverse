@@ -3,19 +3,23 @@ import assetIndex from "../../assets/avatar/assetsIndex.json"
 import { Assets } from "pixi.js";
 import {useEffect, useState} from "react";
 
-function extractFilePaths(obj: any, onExtract: (filePath: string) => void) {
-    for (const key in obj) {
-        const value = obj[key];
+function extractFilePaths(
+    obj: unknown,
+    onExtract: (filePath: string) => void
+) {
+    if (obj && typeof obj === "object") {
+        for (const key in obj as Record<string, unknown>) {
+            const value = (obj as Record<string, unknown>)[key];
 
-        if (typeof value === "string") {
-            // base case: it's a file path
-            onExtract(value)
-        } else if (typeof value === "object" && value !== null) {
-            // recursive case: dive deeper
-            extractFilePaths(value, onExtract);
+            if (typeof value === "string") {
+                onExtract(value);
+            } else if (typeof value === "object" && value !== null) {
+                extractFilePaths(value, onExtract);
+            }
         }
     }
 }
+
 
 export const usePreloadAssets = () => {
     const [completed, setCompleted] = useState(false);
