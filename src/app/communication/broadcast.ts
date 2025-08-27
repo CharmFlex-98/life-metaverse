@@ -1,12 +1,13 @@
 // app/communication/stomp-client.ts
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
+import {JsonValue} from "@/app/core/utils";
 
 export type ConnectionState = "disconnected" | "connecting" | "connected" | "error";
 
 interface StompClient {
     client: Client;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
-    publish: (destination: string, body: any) => boolean;
+    publish: (destination: string, body: JsonValue) => boolean;
     connect: () => void;
     disconnect: () => void;
     onConnectionChange: (listener: (state: ConnectionState) => void) => () => void;
@@ -76,7 +77,7 @@ const createStompClient = (): StompClient => {
         return () => subscription.unsubscribe();
     };
 
-    const publish = (destination: string, body: {}): boolean => {
+    const publish = (destination: string, body: JsonValue): boolean => {
         if (!clientInstance || connectionState !== "connected") {
             console.warn("Cannot publish - client not connected");
             return false;
