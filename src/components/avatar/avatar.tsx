@@ -2,18 +2,17 @@ import {ColorMatrixFilter, Texture} from "pixi.js";
 import {useTick} from "@pixi/react";
 import { useAvatarAnimation} from "@/components/avatar/useAvatarAnimation";
 import {useMemo} from "react";
-import {PartTexture} from "@/app/avatar/types";
+import {AvatarRenderInfo, PartTexture} from "@/app/avatar/types";
 
 
 interface IAvatarProps {
-    partTexture: PartTexture
-    position: { x: number, y: number },
+    avatarRenderInfo: AvatarRenderInfo
 }
 
-export const MyAvatar = ({partTexture, position}: IAvatarProps) => {
+export const MyAvatar = ({avatarRenderInfo}: IAvatarProps) => {
 
     const {sprites, updateAnimation} = useAvatarAnimation({
-        partsTexture: partTexture,
+        partsTexture: avatarRenderInfo.partTexture,
         frameWidth: 64,
         frameHeight: 64,
         totalFrames: 2,
@@ -40,8 +39,8 @@ export const MyAvatar = ({partTexture, position}: IAvatarProps) => {
                     anchor={0.5}
                     width={sprite.size}
                     height={sprite.size}
-                    x={position.x}
-                    y={position.y}
+                    x={avatarRenderInfo.position.x}
+                    y={avatarRenderInfo.position.y}
                     // filters={[grayscale]}
                     // tint={0xff0000}
                 />)

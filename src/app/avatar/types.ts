@@ -30,3 +30,9 @@ type PartImportConfig = Record<string, PartColorImportConfig>
 type PartGenderConfig = Partial<Record<AvatarGender, PartImportConfig>>
 export type AvatarImportConfig = Partial<Record<AvatarPart, PartGenderConfig>>
 
+export interface AvatarRenderInfo {
+    partTexture: PartTexture,
+    name: string,
+    position: {x: number, y: number},
+}
+

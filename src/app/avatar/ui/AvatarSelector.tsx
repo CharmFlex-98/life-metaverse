@@ -32,6 +32,8 @@ export interface AvatarPartInfo {
     color: string
 }
 
+export type AvatarInfo = Partial<Record<AvatarPart, AvatarPartInfo>>
+
 const assetPath = "/assets/avatar/selection/"
 const groupByItem = (partInfoList: AvatarPartInfo[]) => {
     return partInfoList.reduce<Record<string, AvatarPartInfo[]>>((acc, current) => {

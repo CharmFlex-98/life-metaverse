@@ -1,7 +1,8 @@
 "use client"
 
+import {Button} from "@/components/ui/button"
 import {useCallback, useEffect, useMemo, useRef, useState} from "react"
-import {MainCanvas} from "@/app/avatar/ui/mainCanvas"
+import {AvatarCreated, AvatarPartUrlMap, MainCanvas} from "@/app/avatar/ui/mainCanvas"
 import assetsIndex from "../../assets/avatar/assetsIndex.json"
 import {
     Select,
@@ -13,8 +14,12 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import {AvatarGender, AvatarImportConfig, AvatarPart} from "@/app/avatar/types";
-import {AvatarPartInfo, AvatarSelector} from "@/app/avatar/ui/AvatarSelector";
+import {AvatarInfo, AvatarPartInfo, AvatarSelector} from "@/app/avatar/ui/AvatarSelector";
 import {Spinner} from "@/components/ui/shadcn-io/spinner";
+import {stompClient} from "@/app/communication/broadcast";
+import {useBroadcast} from "@/app/communication/useSubscribeEvent";
+import {IMessage} from "@stomp/stompjs";
+import {usePreloadAssets} from "@/app/core/preload";
 
 type Gender = "male" | "female" | "unisex"
 
@@ -99,15 +104,47 @@ const partInfoMap = buildAvatarPartInfoMap()
 
 export default function AvatarCustomizer() {
     const canvasContainerRef = useRef<HTMLDivElement>(null)
-    const [selectedParts, setSelectedParts] = useState<Partial<Record<AvatarPart, AvatarPartInfo>>>({})
+    const [selectedParts, setSelectedParts] = useState<AvatarInfo>({})
     const [gender, setGender] = useState<Gender>("male")
     const [show, setShow] = useState(false)
+    const { state, stompClient } = useBroadcast()
+    const [avatarCreated, setAvatarCreated] = useState<AvatarCreated[]>([])
+    const { completed, progress } = usePreloadAssets()
+
+
+    let num = useRef(1)
+
+    /*Initialize STOMP server*/
+    useEffect(() => {
+        const unsubscribe = stompClient.subscribe("/topic/avatar-create", (message: IMessage) => {
+            if (message.body) {
+                console.log("created: " + message.body)
+                const res = { ...JSON.parse(message.body), name: num.current } as AvatarInfo
+                const mapped = Object.fromEntries(Object.entries(res).map(([part, info]) => {
+                    return [part, info.assetPath]
+                })) as AvatarPartUrlMap
+                num.current = num.current + 1
+                console.log("res is: " + JSON.stringify(res))
+                setAvatarCreated((prev) => [...prev, { ...mapped, name: num.current.toString() } as AvatarCreated])
+            }
+        })
+
+        return () => unsubscribe()
+    }, []);
+
+    const onCreateAvatar = useCallback(() => {
+        console.log("selectedParts: " + JSON.stringify(selectedParts))
+        stompClient.publish("/topic/avatar-create", selectedParts)
+    }, [selectedParts])
+
 
     useEffect(() => {
-        setTimeout(() => {
-            setShow(true)
-        }, 1000)
-    }, []);
+        if (completed) {
+            setTimeout(() => {
+                setShow(true)
+            }, 1500)
+        }
+    }, [completed]);
 
     // Reset when gender changes
     useEffect(() => {
@@ -157,16 +194,18 @@ export default function AvatarCustomizer() {
             {/* Canvas fills the background */}
             <div ref={canvasContainerRef} className="h-full w-[100vw]">
                 <MainCanvas parentNode={canvasContainerRef}
-                            avatarPartFileName={partFileName}
+                            avatarBuilderPartFileName={partFileName}
                             show={show}
+                            avatarCreated={avatarCreated}
                 />
             </div>
 
 
             {/* Loader*/}
             {!show && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 col">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 col flex flex-col items-center">
                     <Spinner variant="bars" className="text-red-400"/>
+                    <span className="text-black">Loading... {progress}%</span>
                 </div>
             )}
 
@@ -192,6 +231,10 @@ export default function AvatarCustomizer() {
 
                     {/* Dynamic Avatar Part Selectors */}
                     {selectors}
+
+                    <div>
+                        <Button onClick={onCreateAvatar}>CREATE</Button>
+                    </div>
                 </div>
             }
         </div>
