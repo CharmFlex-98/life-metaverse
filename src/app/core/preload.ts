@@ -3,7 +3,7 @@ import assetIndex from "../../assets/avatar/assetsIndex.json"
 import { Assets } from "pixi.js";
 import {useEffect, useState} from "react";
 
-function extractFilePaths(
+export function extractFilePaths(
     obj: unknown,
     onExtract: (filePath: string) => void
 ) {
