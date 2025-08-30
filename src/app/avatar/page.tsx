@@ -145,6 +145,7 @@ export default function AvatarCustomizer() {
     }, []);
 
     const onCreateAvatar = useCallback(() => {
+        setIsBuilderOpen(false)
         console.log("selectedParts: " + JSON.stringify(selectedParts))
         stompClient.publish("/topic/avatar-create", selectedParts)
     }, [selectedParts])
@@ -269,7 +270,7 @@ export default function AvatarCustomizer() {
                 <div className="absolute top-4 right-4 z-50">
                     <Button
                         onClick={() => setIsBuilderOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 text-lg"
+                        className="hover:bg-black text-white px-6 py-3 text-lg"
                     >
                         Open Avatar Builder
                     </Button>
@@ -279,7 +280,7 @@ export default function AvatarCustomizer() {
 
             {/* Avatar Builder Dialog */}
             <Dialog open={isBuilderOpen} onOpenChange={setIsBuilderOpen}>
-                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto overflow-x-hidden">
+                <DialogContent className="min-w-[60vw] max-h-[90vh] overflow-auto justify-center">
                     <DialogHeader>
                         <DialogTitle>Avatar Builder</DialogTitle>
                         <DialogDescription>
@@ -287,9 +288,9 @@ export default function AvatarCustomizer() {
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="w-full flex flex-col gap-6 py-4">
+                    <div className="flex gap-6 py-4 h-[70vh]">
                         {/* Left Side - Controls */}
-                        <div className="flex flex-col gap-4 overflow-y-auto max-h-[70vh] pr-2">
+                        <div className="max-w-[30vw] flex flex-col gap-4 overflow-y-auto pr-2">
                             {/* Gender Selector */}
                             <div>
                                 <label className="text-sm font-medium mb-2 block">Gender</label>
@@ -311,58 +312,32 @@ export default function AvatarCustomizer() {
                             {selectors}
 
                             {/* Action Buttons */}
-                            <div className="flex gap-2 pt-4 ">
+                            <div className="flex gap-2 pt-4">
                                 <Button
-                                    onClick={onConfirmAvatar}
-                                    className="bg-green-600 hover:bg-green-700"
+                                    onClick={onCreateAvatar}
+                                    className="flex-1 bg-green-600 hover:bg-green-700"
                                 >
                                     Confirm Avatar
                                 </Button>
                             </div>
                         </div>
 
-                        <div ref={previewContainerRef} className="flex-1 flex flex-col items-center justify-center">
-                            <div className="overflow-x-hidden">Test</div>
-                            <AvatarPreview
-                                parentNode={previewContainerRef}
-                                background={backgroundAsset}
-                                avatarBuilderPartFileName={builderPartFileName} />
-                            <div className="absolute bottom-2 left-2 text-xs text-gray-600 bg-white/80 px-2 py-1 rounded">
+                        {/* Right Side - Avatar Preview */}
+                        <div className="max-w-[30vw] max-h-[80vh] rounded-lg border-2 border-gray-200 relative flex flex-col">
+                            <div ref={previewContainerRef} className="w-full h-full">
+                                <AvatarPreview
+                                    parentNode={previewContainerRef}
+                                    background={backgroundAsset}
+                                    avatarBuilderPartFileName={builderPartFileName}
+                                />
+                            </div>
+                            <div className="absolute bottom-2 left-2 text-xs text-gray-600 bg-white/80 px-2 py-1 rounded z-10">
                                 Preview
                             </div>
                         </div>
                     </div>
                 </DialogContent>
             </Dialog>
-
-
-            {/*/!* Controls *!/*/}
-            {/*{show &&*/}
-            {/*    <div*/}
-            {/*        className="absolute top-0 right-0 flex flex-col items-center gap-2 p-4 rounded-lg shadow-lg bg-white/70">*/}
-            {/*        /!* Gender Selector *!/*/}
-            {/*        <Select onValueChange={(val: Gender) => setGender(val)} value={gender}>*/}
-            {/*            <SelectTrigger className="w-[180px]">*/}
-            {/*                <SelectValue placeholder="Select gender"/>*/}
-            {/*            </SelectTrigger>*/}
-            {/*            <SelectContent>*/}
-            {/*                <SelectGroup>*/}
-            {/*                    <SelectLabel>Gender</SelectLabel>*/}
-            {/*                    <SelectItem value="male">Male</SelectItem>*/}
-            {/*                    <SelectItem value="female">Female</SelectItem>*/}
-            {/*                </SelectGroup>*/}
-            {/*            </SelectContent>*/}
-            {/*        </Select>*/}
-
-
-            {/*        /!* Dynamic Avatar Part Selectors *!/*/}
-            {/*        {selectors}*/}
-
-            {/*        <div>*/}
-            {/*            <Button onClick={onCreateAvatar}>CREATE</Button>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*}*/}
         </div>
     )
 }
