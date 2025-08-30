@@ -2,149 +2,368 @@
   "body": {
     "female": {
       "body": {
-        "light": "body/female_body_light.png"
+        "light": {
+          "id": 0,
+          "path": "body/0_female_body_light.png"
+        }
       }
     },
     "male": {
       "body": {
-        "light": "body/male_body_light.png"
+        "light": {
+          "id": 1,
+          "path": "body/1_male_body_light.png"
+        }
       }
     }
   },
   "hair": {
     "unisex": {
-      "long_messy": {
-        "black": "hair/unisex_long_messy_black.png",
-        "blonde": "hair/unisex_long_messy_blonde.png",
-        "chestnut": "hair/unisex_long_messy_chestnut.png",
-        "red": "hair/unisex_long_messy_red.png",
-        "white": "hair/unisex_long_messy_white.png"
-      },
       "short_hair": {
-        "black": "hair/unisex_short_hair_black.png",
-        "chestnut": "hair/unisex_short_hair_chestnut.png",
-        "red": "hair/unisex_short_hair_red.png",
-        "white": "hair/unisex_short_hair_white.png"
+        "white": {
+          "id": 10,
+          "path": "hair/10_unisex_short_hair_white.png"
+        },
+        "black": {
+          "id": 7,
+          "path": "hair/7_unisex_short_hair_black.png"
+        },
+        "chestnut": {
+          "id": 8,
+          "path": "hair/8_unisex_short_hair_chestnut.png"
+        },
+        "red": {
+          "id": 9,
+          "path": "hair/9_unisex_short_hair_red.png"
+        }
+      },
+      "long_messy": {
+        "black": {
+          "id": 2,
+          "path": "hair/2_unisex_long_messy_black.png"
+        },
+        "blonde": {
+          "id": 3,
+          "path": "hair/3_unisex_long_messy_blonde.png"
+        },
+        "chestnut": {
+          "id": 4,
+          "path": "hair/4_unisex_long_messy_chestnut.png"
+        },
+        "red": {
+          "id": 5,
+          "path": "hair/5_unisex_long_messy_red.png"
+        },
+        "white": {
+          "id": 6,
+          "path": "hair/6_unisex_long_messy_white.png"
+        }
       }
     }
   },
   "head": {
     "female": {
       "head": {
-        "light": "head/female_head_light.png"
+        "light": {
+          "id": 11,
+          "path": "head/11_female_head_light.png"
+        }
       }
     },
     "male": {
       "head": {
-        "light": "head/male_head_light.png"
+        "light": {
+          "id": 12,
+          "path": "head/12_male_head_light.png"
+        }
       }
     }
   },
   "pants": {
     "female": {
       "long_pants": {
-        "brown": "pants/female_long_pants_brown.png",
-        "gray": "pants/female_long_pants_gray.png",
-        "white": "pants/female_long_pants_white.png"
+        "brown": {
+          "id": 13,
+          "path": "pants/13_female_long_pants_brown.png"
+        },
+        "gray": {
+          "id": 14,
+          "path": "pants/14_female_long_pants_gray.png"
+        },
+        "white": {
+          "id": 15,
+          "path": "pants/15_female_long_pants_white.png"
+        }
       },
       "shorts": {
-        "black": "pants/female_shorts_black.png",
-        "navy": "pants/female_shorts_navy.png",
-        "orange": "pants/female_shorts_orange.png",
-        "pink": "pants/female_shorts_pink.png",
-        "red": "pants/female_shorts_red.png",
-        "white": "pants/female_shorts_white.png",
-        "yellow": "pants/female_shorts_yellow.png"
+        "black": {
+          "id": 16,
+          "path": "pants/16_female_shorts_black.png"
+        },
+        "navy": {
+          "id": 17,
+          "path": "pants/17_female_shorts_navy.png"
+        },
+        "orange": {
+          "id": 18,
+          "path": "pants/18_female_shorts_orange.png"
+        },
+        "pink": {
+          "id": 19,
+          "path": "pants/19_female_shorts_pink.png"
+        },
+        "red": {
+          "id": 20,
+          "path": "pants/20_female_shorts_red.png"
+        },
+        "white": {
+          "id": 21,
+          "path": "pants/21_female_shorts_white.png"
+        },
+        "yellow": {
+          "id": 22,
+          "path": "pants/22_female_shorts_yellow.png"
+        }
       }
     },
     "male": {
       "long_pants": {
-        "brown": "pants/male_long_pants_brown.png",
-        "gray": "pants/male_long_pants_gray.png",
-        "white": "pants/male_long_pants_white.png"
+        "brown": {
+          "id": 23,
+          "path": "pants/23_male_long_pants_brown.png"
+        },
+        "gray": {
+          "id": 24,
+          "path": "pants/24_male_long_pants_gray.png"
+        },
+        "white": {
+          "id": 25,
+          "path": "pants/25_male_long_pants_white.png"
+        }
       },
       "shorts": {
-        "black": "pants/male_shorts_black.png",
-        "navy": "pants/male_shorts_navy.png",
-        "orange": "pants/male_shorts_orange.png",
-        "pink": "pants/male_shorts_pink.png",
-        "red": "pants/male_shorts_red.png",
-        "white": "pants/male_shorts_white.png",
-        "yellow": "pants/male_shorts_yellow.png"
+        "black": {
+          "id": 26,
+          "path": "pants/26_male_shorts_black.png"
+        },
+        "navy": {
+          "id": 27,
+          "path": "pants/27_male_shorts_navy.png"
+        },
+        "orange": {
+          "id": 28,
+          "path": "pants/28_male_shorts_orange.png"
+        },
+        "pink": {
+          "id": 29,
+          "path": "pants/29_male_shorts_pink.png"
+        },
+        "red": {
+          "id": 30,
+          "path": "pants/30_male_shorts_red.png"
+        },
+        "white": {
+          "id": 31,
+          "path": "pants/31_male_shorts_white.png"
+        },
+        "yellow": {
+          "id": 32,
+          "path": "pants/32_male_shorts_yellow.png"
+        }
       }
     }
   },
   "shirt": {
     "female": {
       "clothes_long_sleeve": {
-        "black": "shirt/female_clothes_long_sleeve_black.png",
-        "navy": "shirt/female_clothes_long_sleeve_navy.png",
-        "orange": "shirt/female_clothes_long_sleeve_orange.png",
-        "pink": "shirt/female_clothes_long_sleeve_pink.png",
-        "red": "shirt/female_clothes_long_sleeve_red.png",
-        "white": "shirt/female_clothes_long_sleeve_white.png",
-        "yellow": "shirt/female_clothes_long_sleeve_yellow.png"
+        "black": {
+          "id": 33,
+          "path": "shirt/33_female_clothes_long_sleeve_black.png"
+        },
+        "navy": {
+          "id": 34,
+          "path": "shirt/34_female_clothes_long_sleeve_navy.png"
+        },
+        "orange": {
+          "id": 35,
+          "path": "shirt/35_female_clothes_long_sleeve_orange.png"
+        },
+        "pink": {
+          "id": 36,
+          "path": "shirt/36_female_clothes_long_sleeve_pink.png"
+        },
+        "red": {
+          "id": 37,
+          "path": "shirt/37_female_clothes_long_sleeve_red.png"
+        },
+        "white": {
+          "id": 38,
+          "path": "shirt/38_female_clothes_long_sleeve_white.png"
+        },
+        "yellow": {
+          "id": 39,
+          "path": "shirt/39_female_clothes_long_sleeve_yellow.png"
+        }
       },
       "short_sleeve_polo": {
-        "brown": "shirt/female_short_sleeve_polo_brown.png",
-        "gray": "shirt/female_short_sleeve_polo_gray.png",
-        "white": "shirt/female_short_sleeve_polo_white.png"
+        "brown": {
+          "id": 40,
+          "path": "shirt/40_female_short_sleeve_polo_brown.png"
+        },
+        "gray": {
+          "id": 41,
+          "path": "shirt/41_female_short_sleeve_polo_gray.png"
+        },
+        "white": {
+          "id": 42,
+          "path": "shirt/42_female_short_sleeve_polo_white.png"
+        }
       }
     },
     "male": {
       "clothes_long_sleeve": {
-        "black": "shirt/male_clothes_long_sleeve_black.png",
-        "navy": "shirt/male_clothes_long_sleeve_navy.png",
-        "orange": "shirt/male_clothes_long_sleeve_orange.png",
-        "pink": "shirt/male_clothes_long_sleeve_pink.png",
-        "red": "shirt/male_clothes_long_sleeve_red.png",
-        "white": "shirt/male_clothes_long_sleeve_white.png",
-        "yellow": "shirt/male_clothes_long_sleeve_yellow.png"
+        "black": {
+          "id": 43,
+          "path": "shirt/43_male_clothes_long_sleeve_black.png"
+        },
+        "navy": {
+          "id": 44,
+          "path": "shirt/44_male_clothes_long_sleeve_navy.png"
+        },
+        "orange": {
+          "id": 45,
+          "path": "shirt/45_male_clothes_long_sleeve_orange.png"
+        },
+        "pink": {
+          "id": 46,
+          "path": "shirt/46_male_clothes_long_sleeve_pink.png"
+        },
+        "red": {
+          "id": 47,
+          "path": "shirt/47_male_clothes_long_sleeve_red.png"
+        },
+        "white": {
+          "id": 48,
+          "path": "shirt/48_male_clothes_long_sleeve_white.png"
+        },
+        "yellow": {
+          "id": 49,
+          "path": "shirt/49_male_clothes_long_sleeve_yellow.png"
+        }
       },
       "short_sleeve_polo": {
-        "brown": "shirt/male_short_sleeve_polo_brown.png",
-        "gray": "shirt/male_short_sleeve_polo_gray.png",
-        "white": "shirt/male_short_sleeve_polo_white.png"
+        "brown": {
+          "id": 50,
+          "path": "shirt/50_male_short_sleeve_polo_brown.png"
+        },
+        "gray": {
+          "id": 51,
+          "path": "shirt/51_male_short_sleeve_polo_gray.png"
+        },
+        "white": {
+          "id": 52,
+          "path": "shirt/52_male_short_sleeve_polo_white.png"
+        }
       }
     }
   },
   "shoes": {
     "female": {
       "basic_boots": {
-        "brown": "shoes/female_basic_boots_brown.png",
-        "gray": "shoes/female_basic_boots_gray.png",
-        "white": "shoes/female_basic_boots_white.png"
+        "brown": {
+          "id": 53,
+          "path": "shoes/53_female_basic_boots_brown.png"
+        },
+        "gray": {
+          "id": 54,
+          "path": "shoes/54_female_basic_boots_gray.png"
+        },
+        "white": {
+          "id": 55,
+          "path": "shoes/55_female_basic_boots_white.png"
+        }
       },
       "basic_shoes": {
-        "black": "shoes/female_basic_shoes_black.png",
-        "navy": "shoes/female_basic_shoes_navy.png",
-        "red": "shoes/female_basic_shoes_red.png",
-        "white": "shoes/female_basic_shoes_white.png"
+        "black": {
+          "id": 56,
+          "path": "shoes/56_female_basic_shoes_black.png"
+        },
+        "navy": {
+          "id": 57,
+          "path": "shoes/57_female_basic_shoes_navy.png"
+        },
+        "red": {
+          "id": 58,
+          "path": "shoes/58_female_basic_shoes_red.png"
+        },
+        "white": {
+          "id": 59,
+          "path": "shoes/59_female_basic_shoes_white.png"
+        }
       },
       "shoes_basic_shoes": {
-        "orange": "shoes/female_shoes_basic_shoes_orange.png",
-        "yellow": "shoes/female_shoes_basic_shoes_yellow.png"
+        "orange": {
+          "id": 60,
+          "path": "shoes/60_female_shoes_basic_shoes_orange.png"
+        },
+        "yellow": {
+          "id": 61,
+          "path": "shoes/61_female_shoes_basic_shoes_yellow.png"
+        }
       }
     },
     "male": {
       "basic_boots": {
-        "brown": "shoes/male_basic_boots_brown.png",
-        "gray": "shoes/male_basic_boots_gray.png",
-        "white": "shoes/male_basic_boots_white.png"
+        "brown": {
+          "id": 62,
+          "path": "shoes/62_male_basic_boots_brown.png"
+        },
+        "gray": {
+          "id": 63,
+          "path": "shoes/63_male_basic_boots_gray.png"
+        },
+        "white": {
+          "id": 64,
+          "path": "shoes/64_male_basic_boots_white.png"
+        }
       },
       "basic_shoes": {
-        "black": "shoes/male_basic_shoes_black.png",
-        "navy": "shoes/male_basic_shoes_navy.png",
-        "orange": "shoes/male_basic_shoes_orange.png",
-        "pink": "shoes/male_basic_shoes_pink.png",
-        "red": "shoes/male_basic_shoes_red.png",
-        "white": "shoes/male_basic_shoes_white.png",
-        "yellow": "shoes/male_basic_shoes_yellow.png"
+        "black": {
+          "id": 65,
+          "path": "shoes/65_male_basic_shoes_black.png"
+        },
+        "navy": {
+          "id": 66,
+          "path": "shoes/66_male_basic_shoes_navy.png"
+        },
+        "orange": {
+          "id": 67,
+          "path": "shoes/67_male_basic_shoes_orange.png"
+        },
+        "pink": {
+          "id": 68,
+          "path": "shoes/68_male_basic_shoes_pink.png"
+        },
+        "red": {
+          "id": 69,
+          "path": "shoes/69_male_basic_shoes_red.png"
+        },
+        "white": {
+          "id": 70,
+          "path": "shoes/70_male_basic_shoes_white.png"
+        },
+        "yellow": {
+          "id": 71,
+          "path": "shoes/71_male_basic_shoes_yellow.png"
+        }
       }
     },
     "shoes": {
       "basic_shoes": {
-        "pink": "shoes/shoes_basic_shoes_pink.png"
+        "pink": {
+          "id": 72,
+          "path": "shoes/72_shoes_basic_shoes_pink.png"
+        }
       }
     }
   }

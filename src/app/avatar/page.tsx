@@ -46,29 +46,32 @@ const buildAvatarPartInfo = () => {
     Object.entries(avatarAssets).forEach(([part, genders]) => {
         Object.entries(genders ?? {}).forEach(([gender, itemNames]) => {
             Object.entries(itemNames ?? {}).forEach(([itemName, colors]) => {
-                Object.entries(colors ?? {}).forEach(([color, assetPath]) => {
+                Object.entries(colors ?? {}).forEach(([color, assetInfo]) => {
                     if (gender === "unisex") {
                         res.push(...[
                             {
+                                id: assetInfo.id,
                                 type: part as AvatarPart,
                                 name: itemName,
                                 gender: "male" as AvatarGender,
-                                assetPath: assetPath,
+                                assetPath: assetInfo.path,
                                 color: color,
                             }, {
+                                id: assetInfo.id,
                                 type: part as AvatarPart,
                                 name: itemName,
                                 gender: "female" as AvatarGender,
-                                assetPath: assetPath,
+                                assetPath: assetInfo.path,
                                 color: color,
                             }
                         ])
                     } else {
                         res.push({
+                            id: assetInfo.id,
                             type: part as AvatarPart,
                             name: itemName,
                             gender: gender as AvatarGender,
-                            assetPath: assetPath,
+                            assetPath: assetInfo.path,
                             color: color,
                         })
                     }
@@ -150,19 +153,12 @@ export default function AvatarCustomizer() {
         stompClient.publish("/topic/avatar-create", selectedParts)
     }, [selectedParts])
 
-    const onConfirmAvatar = useCallback(() => {
-        // Save the current selection as the finalized avatar
-        setFinalizedAvatar(selectedParts)
-        setIsBuilderOpen(false)
-        console.log("Avatar finalized: " + JSON.stringify(selectedParts))
-    }, [selectedParts])
-
 
     useEffect(() => {
         if (completed) {
             setTimeout(() => {
                 setShow(true)
-            }, 1500)
+            }, 500)
         }
     }, [completed]);
 
@@ -208,11 +204,6 @@ export default function AvatarCustomizer() {
         }))
     }, [selectedParts])
 
-    const finalPartFileName = useMemo(() => {
-        return Object.fromEntries(Object.entries(finalizedAvatar).map(([key, value]) => {
-            return [key, value.assetPath]
-        }))
-    }, [finalizedAvatar])
 
     // Load preview assets when builder is open and parts change
     useEffect(() => {

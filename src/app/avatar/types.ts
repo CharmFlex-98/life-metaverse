@@ -25,7 +25,11 @@ export interface BackgroundTexture {
 
 export type ComponentTexture = PartTexture & BackgroundTexture
 
-type PartColorImportConfig = Record<string, string>
+type AssetInfo = {
+    id: number,
+    path: string,
+}
+type PartColorImportConfig = Record<string, AssetInfo>
 type PartImportConfig = Record<string, PartColorImportConfig>
 type PartGenderConfig = Partial<Record<AvatarGender, PartImportConfig>>
 export type AvatarImportConfig = Partial<Record<AvatarPart, PartGenderConfig>>

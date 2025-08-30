@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-selection": "node src/scripts/avatarSelectionGenerator.js"
+    "generate-selection": "node src/scripts/avatarSelectionGenerator.js",
+    "utils": "node src/scripts/utils.js"
   },
   "dependencies": {
     "@pixi/react": "^8.0.3",

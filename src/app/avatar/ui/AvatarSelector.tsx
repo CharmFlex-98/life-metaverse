@@ -25,6 +25,7 @@ interface AvatarSelectorProps {
 }
 
 export interface AvatarPartInfo {
+    id: number
     type: AvatarPart
     name: string
     gender: AvatarGender

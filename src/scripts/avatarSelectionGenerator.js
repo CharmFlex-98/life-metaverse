@@ -56,11 +56,11 @@ async function processImages() {
 function parseFilename(relativePath) {
   const [part, filename] = [relativePath.split("/")[0], path.basename(relativePath, path.extname(relativePath))];
 
-  const [gender, ...rest] = filename.split("_");
+  const [index, gender, ...rest] = filename.split("_");
   const color = rest.pop();
   const itemName = rest.join("_");
 
-  return { part, gender, itemName, color, relativePath };
+  return { id: Number(index), part, gender, itemName, color, relativePath };
 }
 
 // Build structured assets index
@@ -76,14 +76,14 @@ function buildIndex() {
         walkDirIndex(fullPath, relativePath);
       } else if (/\.(png|jpg|jpeg)$/i.test(entry.name)) {
         const cleanPath = relativePath.replace(/\\/g, "/");
-        const { part, gender, itemName, color } = parseFilename(cleanPath);
+        const { id, part, gender, itemName, color } = parseFilename(cleanPath);
 
         if (!assetsIndex[part]) assetsIndex[part] = {};
         if (!assetsIndex[part][gender]) assetsIndex[part][gender] = {};
         if (!assetsIndex[part][gender][itemName]) assetsIndex[part][gender][itemName] = {};
 
         // Save final cropped path prefixed for loader usage
-        assetsIndex[part][gender][itemName][color] = cleanPath;
+        assetsIndex[part][gender][itemName][color] = { id, path: cleanPath };
       }
     });
   }

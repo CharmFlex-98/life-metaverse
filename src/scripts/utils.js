@@ -1,8 +1,15 @@
-// rename-files.js
-const fs = require("fs");
-const path = require("path");
+// rename-files.mjs
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
-const folder = path.join(__dirname, "public/assets/avatar/animation");
+// Fix __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const folder = path.join(__dirname, "../../public/assets/avatar/animation");
+
+let currentIndex = 0;
 
 function renameFilesInDir(dir) {
     const files = fs.readdirSync(dir);
@@ -21,7 +28,7 @@ function renameFilesInDir(dir) {
             // skip if already prefixed
             if (/^\d+_/.test(base)) return;
 
-            const newName = `${index}_${base}${ext}`;
+            const newName = `${currentIndex++}_${base}${ext}`;
             const newPath = path.join(dir, newName);
 
             fs.renameSync(fullPath, newPath);

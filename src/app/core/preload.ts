@@ -20,8 +20,13 @@ export function extractFilePaths(
     }
 }
 
+const assetIdToAssetMap = new Map<number, string>();
 
-export const usePreloadAssets = () => {
+const getById = (id: number) => {
+    return assetIdToAssetMap.get(id)
+}
+
+const usePreloadAssets = () => {
     const [completed, setCompleted] = useState(false);
     const [progress, setProgress] = useState(0);
 
@@ -29,25 +34,21 @@ export const usePreloadAssets = () => {
         let isCancelled = false;
 
         const animationPaths: string[] = [];
-        const selectionPaths: string[] = [];
 
         extractFilePaths(assetIndex, (filePath) => {
             animationPaths.push(`/assets/avatar/animation/${filePath}`);
-            selectionPaths.push(`/assets/avatar/selection/${filePath}`);
         });
 
-        const preloadImage = (path: string): Promise<void> => {
-            return new Promise<void>((resolve, reject) => {
-                const img = new window.Image();
-                img.onload = () => resolve();
-                img.onerror = () => reject(new Error(`Failed to load image: ${path}`));
-                img.src = path;
-            });
-        };
+        animationPaths.forEach((path) => {
+            const index = Number(path.split("_")?.[0])
+            if (index) {
+                assetIdToAssetMap.set(index, path)
+            }
+        })
+
 
         const tasks: Promise<void>[] = [
             ...animationPaths.map((p) => Assets.load(p)),
-            ...selectionPaths.map((p) => preloadImage(p)),
         ];
 
         let loadedCount = 0;
@@ -77,5 +78,7 @@ export const usePreloadAssets = () => {
 
     return { completed, progress };
 };
+
+export { usePreloadAssets, getById }
 
 
