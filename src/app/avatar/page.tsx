@@ -157,7 +157,7 @@ export default function AvatarCustomizer() {
     }, []);
 
     useEffect(() => {
-        httpGet<BroadCastAvatarEventResponse[]>("/avatars/all", { defaultErrorHandler: false })
+        httpGet<BroadCastAvatarEventResponse[]>("/api/avatars/all", { defaultErrorHandler: false })
             .then((res) => {
                 if (res.success) {
                     const allAvatars = res.data.map((value, index, array) => {
@@ -183,7 +183,7 @@ export default function AvatarCustomizer() {
         })
         const request = {name: avatarName, parts: Object.fromEntries(mapped)} as CreateAvatarRequest
         if (request) {
-            httpPost<typeof request, void>("/avatars/create", request, { defaultErrorHandler: false })
+            httpPost<typeof request, void>("/api/avatars/create", request, { defaultErrorHandler: false })
                 .then((res) => {
                     if (res.success) {
                         setIsBuilderOpen(false)
