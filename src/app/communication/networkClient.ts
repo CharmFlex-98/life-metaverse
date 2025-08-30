@@ -28,7 +28,7 @@ export interface HttpOptions<TBody = unknown> {
     body?: TBody;
     headers?: HeadersInit;
     cache?: RequestCache;
-    defaultErrorHandler?: Boolean// for Next.js fetch caching ("force-cache" | "no-store" etc.)
+    defaultErrorHandler?: boolean// for Next.js fetch caching ("force-cache" | "no-store" etc.)
 }
 
 interface ErrorBody {
