@@ -44,6 +44,7 @@ function AvatarPreview({parentNode, background, avatarBuilderPartFileName}: Avat
     // Load avatar parts
     useEffect(() => {
         const tasks: Promise<void>[] = []
+        setComponent({})
 
         // Load avatar parts
         Object.entries(avatarBuilderPartFileName).forEach(([part, fileName]) => {
@@ -105,6 +106,7 @@ function AvatarPreview({parentNode, background, avatarBuilderPartFileName}: Avat
 
                     {/* Avatar */}
                     <MyAvatar
+                        avatarSize={256}
                         avatarRenderInfo={{
                             partTexture: {
                                 hair: component.hair,

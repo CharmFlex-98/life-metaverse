@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import {Application, extend} from "@pixi/react"
 import {PropsWithChildren, Ref, RefObject, useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Assets, Container, Sprite, Texture, TextureSource, Text } from "pixi.js";
@@ -118,19 +119,14 @@ function MainCanvas({
     }, [avatarCreated, canvasSize]);
 
     const mapper = useMemo(() => {
-        console.log("renderInfo: " + Object.entries(avatarRenderInfo).length)
         return Object.entries(avatarRenderInfo).map(([name, renderInfo], idx) => {
-            const textKey = `${name}_pixiText`
-            const avatarKey = `${name}_avatar`
-            console.log("textKey: " + textKey)
+            const fragmentKey = `${name}_fragment`
             return (
-                <>
+                <React.Fragment key={fragmentKey}>
                     <MyAvatar
-                        key={avatarKey}
                         avatarRenderInfo={renderInfo}
                     />
                     <pixiText
-                        key={textKey}
                         text={name}
                         anchor={0.5}
                         x={renderInfo.position.x}
@@ -142,7 +138,7 @@ function MainCanvas({
                             stroke: "black",
                         }}
                     />
-                </>
+                </React.Fragment>
             )
         })
     }, [avatarRenderInfo])
@@ -156,16 +152,16 @@ function MainCanvas({
         >
             {show && (
                 <pixiContainer>
-                    {/*{backgroundTexture && (*/}
-                    {/*    <pixiSprite*/}
-                    {/*        key="background"*/}
-                    {/*        anchor={{x: 0, y: 0}}*/}
-                    {/*        eventMode={'static'}*/}
-                    {/*        texture={backgroundTexture}*/}
-                    {/*        width={canvasSize.width}*/}
-                    {/*        height={canvasSize.height}*/}
-                    {/*    />*/}
-                    {/*)}*/}
+                    {backgroundTexture && (
+                        <pixiSprite
+                            key="background"
+                            anchor={{x: 0, y: 0}}
+                            eventMode={'static'}
+                            texture={backgroundTexture}
+                            width={canvasSize.width}
+                            height={canvasSize.height}
+                        />
+                    )}
                     { mapper }
                 </pixiContainer>
             )}

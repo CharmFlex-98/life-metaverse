@@ -7,10 +7,11 @@ import {AVATAR_SIZE} from "@/app/avatar/constants";
 
 
 interface IAvatarProps {
-    avatarRenderInfo: AvatarRenderInfo
+    avatarRenderInfo: AvatarRenderInfo,
+    avatarSize?: number
 }
 
-export const MyAvatar = ({avatarRenderInfo}: IAvatarProps) => {
+export const MyAvatar = ({avatarSize = AVATAR_SIZE, avatarRenderInfo}: IAvatarProps) => {
 
     const {sprites, updateAnimation} = useAvatarAnimation({
         partsTexture: avatarRenderInfo.partTexture,
@@ -18,7 +19,7 @@ export const MyAvatar = ({avatarRenderInfo}: IAvatarProps) => {
         frameHeight: 64,
         totalFrames: 2,
         animationSpeed: 3,
-        outputSize: AVATAR_SIZE
+        outputSize: avatarSize
     })
 
     useTick((delta) => {
