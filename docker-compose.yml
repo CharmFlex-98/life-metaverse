@@ -5,3 +5,4 @@ services:
       - "3081:3000"
     environment:
       - NODE_ENV=production
+      - SERVER_DOMAIN=${SERVER_DOMAIN}

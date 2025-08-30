@@ -46,7 +46,7 @@ const defaultExceptionHandler = (error: unknown) => {
     return toast.error("Unknown error occurred. Please try again later.")
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8081";
+const BASE_URL = process.env.SERVER_DOMAIN ? `https://${process.env.SERVER_DOMAIN}` : "http://localhost:8081";
 
 export async function networkClient<TBody, TResponse = unknown>(
     endpoint: string,
