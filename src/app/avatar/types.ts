@@ -1,4 +1,5 @@
 import {Texture} from "pixi.js";
+import {Create} from "sharp";
 
 export type AvatarPart =
     "body" |
@@ -39,4 +40,11 @@ export interface AvatarRenderInfo {
     name: string,
     position: {x: number, y: number},
 }
+
+export interface CreateAvatarRequest {
+    name: string
+    parts: Record<AvatarPart, { id: number }>
+}
+
+export type BroadCastAvatarEventResponse = CreateAvatarRequest
 

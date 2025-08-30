@@ -1,16 +1,18 @@
 "use client";
 import {Application, extend} from "@pixi/react"
 import {PropsWithChildren, Ref, RefObject, useCallback, useEffect, useMemo, useRef, useState} from "react";
-import {Assets, Container, Sprite, Texture, TextureSource} from "pixi.js";
+import {Assets, Container, Sprite, Texture, TextureSource, Text } from "pixi.js";
 import {MyAvatar} from "@/components/avatar/avatar";
 import {AvatarPart, AvatarRenderInfo, ComponentTexture, PartTexture} from "@/app/avatar/types";
 import {StaticImageData} from "next/image";
+import {AVATAR_SIZE} from "@/app/avatar/constants";
 
 
 extend({
     Container,
     Sprite,
-    Texture
+    Texture,
+    Text
 })
 
 export type AvatarPartUrlMap = Partial<Record<AvatarPart, string>>
@@ -77,7 +79,6 @@ function MainCanvas({
     }, [background]);
 
     useEffect(() => {
-        console.log("avatar created: " + avatarCreated.length)
         // load "other created avatars"
         avatarCreated.forEach((avatar) => {
             if (avatarRenderInfo[avatar.name]) return
@@ -92,7 +93,6 @@ function MainCanvas({
                     return;
                 }
                 const path = `${prefix}${fileName}`;
-                console.log(path)
                 avatarTasks.push(
                     Assets.load(path).then((asset) => {
                         avatarTextures[part as AvatarPart] = asset;
@@ -109,7 +109,7 @@ function MainCanvas({
                     ...prev,
                     [avatar.name]: {
                         partTexture: avatarTextures,
-                        name: "",
+                        name: avatar.name,
                         position: {x: randomX, y: randomY},
                     },
                 }));
@@ -118,12 +118,33 @@ function MainCanvas({
     }, [avatarCreated, canvasSize]);
 
     const mapper = useMemo(() => {
-        return Object.entries(avatarRenderInfo).map(([name, renderInfo], idx) => (
-            <MyAvatar
-                key={name}
-                avatarRenderInfo={renderInfo}
-            />
-        ))
+        console.log("renderInfo: " + Object.entries(avatarRenderInfo).length)
+        return Object.entries(avatarRenderInfo).map(([name, renderInfo], idx) => {
+            const textKey = `${name}_pixiText`
+            const avatarKey = `${name}_avatar`
+            console.log("textKey: " + textKey)
+            return (
+                <>
+                    <MyAvatar
+                        key={avatarKey}
+                        avatarRenderInfo={renderInfo}
+                    />
+                    <pixiText
+                        key={textKey}
+                        text={name}
+                        anchor={0.5}
+                        x={renderInfo.position.x}
+                        y={renderInfo.position.y - AVATAR_SIZE / 2}
+                        style={{
+                            fill: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                            stroke: "black",
+                        }}
+                    />
+                </>
+            )
+        })
     }, [avatarRenderInfo])
 
 
@@ -135,16 +156,16 @@ function MainCanvas({
         >
             {show && (
                 <pixiContainer>
-                    {backgroundTexture && (
-                        <pixiSprite
-                            anchor={{x: 0, y: 0}}
-                            eventMode={'static'}
-                            texture={backgroundTexture}
-                            width={canvasSize.width}
-                            height={canvasSize.height}
-                        />
-                    )}
-
+                    {/*{backgroundTexture && (*/}
+                    {/*    <pixiSprite*/}
+                    {/*        key="background"*/}
+                    {/*        anchor={{x: 0, y: 0}}*/}
+                    {/*        eventMode={'static'}*/}
+                    {/*        texture={backgroundTexture}*/}
+                    {/*        width={canvasSize.width}*/}
+                    {/*        height={canvasSize.height}*/}
+                    {/*    />*/}
+                    {/*)}*/}
                     { mapper }
                 </pixiContainer>
             )}

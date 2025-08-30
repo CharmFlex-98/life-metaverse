@@ -13,19 +13,28 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {AvatarGender, AvatarImportConfig, AvatarPart} from "@/app/avatar/types";
+import {
+    AvatarGender,
+    AvatarImportConfig,
+    AvatarPart,
+    BroadCastAvatarEventResponse,
+    CreateAvatarRequest
+} from "@/app/avatar/types";
 import {AvatarInfo, AvatarPartInfo, AvatarSelector} from "@/app/avatar/ui/AvatarSelector";
 import {Spinner} from "@/components/ui/shadcn-io/spinner";
 import {useBroadcast} from "@/app/communication/useSubscribeEvent";
 import {IMessage} from "@stomp/stompjs";
-import {usePreloadAssets} from "@/app/core/preload";
+import {getById, usePreloadAssets} from "@/app/core/preload";
 import {PreloadAvatarAssets} from "@/app/avatar/Preload";
-import { Dialog } from "@radix-ui/react-dialog"
+import {Dialog} from "@radix-ui/react-dialog"
 import {DialogContent, DialogDescription, DialogHeader, DialogTitle} from "@/components/ui/dialog"
 import {ComponentTexture} from "@/app/avatar/types";
 import {Assets} from "pixi.js";
 import AvatarPreview from "@/app/avatar/ui/AvatarPreview";
 import backgroundAsset from "../../../public/builder_bg.png";
+import {toast} from "sonner";
+import {Input} from "@/components/ui/input";
+import {httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
 
 
 type Gender = "male" | "female" | "unisex"
@@ -117,41 +126,75 @@ export default function AvatarCustomizer() {
     const canvasContainerRef = useRef<HTMLDivElement>(null)
     const previewContainerRef = useRef<HTMLDivElement>(null)
     const [selectedParts, setSelectedParts] = useState<AvatarInfo>({})
-    const [finalizedAvatar, setFinalizedAvatar] = useState<AvatarInfo>({})
+    const [avatarName, setAvatarName] = useState<string>("")
     const [previewComponent, setPreviewComponent] = useState<ComponentTexture>({})
     const [gender, setGender] = useState<Gender>("male")
     const [show, setShow] = useState(false)
-    const { state, stompClient } = useBroadcast()
+    const {state, stompClient} = useBroadcast()
     const [avatarCreated, setAvatarCreated] = useState<AvatarCreated[]>([])
-    const { completed, progress } = usePreloadAssets()
+    const {completed, progress} = usePreloadAssets()
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
+    const [bannerMessages, setBannerMessages] = useState<string | null>(null)
 
 
     const num = useRef(1)
 
     /*Initialize STOMP server*/
     useEffect(() => {
-        const unsubscribe = stompClient.subscribe("/topic/avatar-create", (message: IMessage) => {
+        const unsubscribe = stompClient.subscribe("/topic/avatars", (message: IMessage) => {
             if (message.body) {
-                console.log("created: " + message.body)
-                const res = { ...JSON.parse(message.body), name: num.current } as AvatarInfo
-                const mapped = Object.fromEntries(Object.entries(res).map(([part, info]) => {
-                    return [part, info.assetPath]
-                })) as AvatarPartUrlMap
-                num.current = num.current + 1
-                console.log("res is: " + JSON.stringify(res))
-                setAvatarCreated((prev) => [...prev, { ...mapped, name: num.current.toString() } as AvatarCreated])
+                const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
+                const parts = res.parts
+                const paths = Object.entries(parts).map(([key, value]) => {
+                    return [key, getById(value.id)]
+                })
+                const mapped = Object.fromEntries(paths) as AvatarPartUrlMap
+                setAvatarCreated((prev) => [...prev, {...mapped, name: res.name} as AvatarCreated])
             }
         })
 
         return () => unsubscribe()
     }, []);
 
+    useEffect(() => {
+        httpGet<BroadCastAvatarEventResponse[]>("/avatars/all", { defaultErrorHandler: false })
+            .then((res) => {
+                if (res.success) {
+                    const allAvatars = res.data.map((value, index, array) => {
+                        const pairs = Object.entries(value.parts).map(([key, value]) => {
+                            return [key, getById(value.id)]
+                        })
+                        return { ...Object.fromEntries(pairs), name: value.name } as AvatarCreated
+                    })
+                    setAvatarCreated(allAvatars)
+                    return
+                }
+                toast.error("Could not get avatar data. Please do try again later.")
+            })
+    }, []);
+
     const onCreateAvatar = useCallback(() => {
-        setIsBuilderOpen(false)
-        console.log("selectedParts: " + JSON.stringify(selectedParts))
-        stompClient.publish("/topic/avatar-create", selectedParts)
-    }, [selectedParts])
+        if (!avatarName) {
+            toast.error("Please give the avatar a name.")
+            return;
+        }
+        const mapped = Object.entries(selectedParts).map(([part, info]) => {
+            return [part,  { id: info.id } ]
+        })
+        const request = {name: avatarName, parts: Object.fromEntries(mapped)} as CreateAvatarRequest
+        if (request) {
+            httpPost<typeof request, void>("/avatars/create", request, { defaultErrorHandler: false })
+                .then((res) => {
+                    if (res.success) {
+                        setIsBuilderOpen(false)
+                        toast.success("Avatar created successfully!")
+                        return
+                    }
+
+                    toast.error("Cannot create avatar. Please try again later.")
+                })
+        }
+    }, [selectedParts, avatarName])
 
 
     useEffect(() => {
@@ -213,17 +256,17 @@ export default function AvatarCustomizer() {
 
         Object.entries(builderPartFileName).forEach(([part, fileName]) => {
             if (!fileName) {
-                setPreviewComponent((prev) => ({ ...prev, [part]: undefined }))
+                setPreviewComponent((prev) => ({...prev, [part]: undefined}))
                 return
             }
 
             const path = `${prefix}${fileName}`
             tasks.push(
                 Assets.load(path).then((asset) => {
-                    setPreviewComponent((prev) => ({ ...prev, [part]: asset }))
+                    setPreviewComponent((prev) => ({...prev, [part]: asset}))
                 }).catch((error) => {
                     console.warn(`Failed to load preview part ${part}:`, error)
-                    setPreviewComponent((prev) => ({ ...prev, [part]: undefined }))
+                    setPreviewComponent((prev) => ({...prev, [part]: undefined}))
                 })
             )
         })
@@ -237,7 +280,7 @@ export default function AvatarCustomizer() {
 
     return (
         <div className="relative h-screen w-screen">
-            <PreloadAvatarAssets />
+            {/*<PreloadAvatarAssets />*/}
             {/* Canvas fills the background */}
             <div ref={canvasContainerRef} className="h-full w-full">
                 <MainCanvas parentNode={canvasContainerRef}
@@ -250,7 +293,8 @@ export default function AvatarCustomizer() {
 
             {/* Loader*/}
             {!show && (
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 col flex flex-col items-center">
+                <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 col flex flex-col items-center">
                     <Spinner variant="bars" className="text-red-400"/>
                     <span className="text-black">Loading... {progress}%</span>
                 </div>
@@ -301,6 +345,10 @@ export default function AvatarCustomizer() {
 
                             {/* Dynamic Avatar Part Selectors */}
                             {selectors}
+                            <div className="flex w-full max-w-sm items-center gap-2">
+                                <Input onChange={(event) => setAvatarName(event.target.value)} className="p-4 mt-4"
+                                       placeholder="Avatar name"/>
+                            </div>
 
                             {/* Action Buttons */}
                             <div className="flex gap-2 pt-4">
@@ -314,7 +362,8 @@ export default function AvatarCustomizer() {
                         </div>
 
                         {/* Right Side - Avatar Preview */}
-                        <div className="max-w-[30vw] max-h-[80vh] rounded-lg border-2 border-gray-200 relative flex flex-col">
+                        <div
+                            className="max-w-[30vw] max-h-[80vh] rounded-lg border-2 border-gray-200 relative flex flex-col">
                             <div ref={previewContainerRef} className="w-full h-full">
                                 <AvatarPreview
                                     parentNode={previewContainerRef}
@@ -322,7 +371,8 @@ export default function AvatarCustomizer() {
                                     avatarBuilderPartFileName={builderPartFileName}
                                 />
                             </div>
-                            <div className="absolute bottom-2 left-2 text-xs text-gray-600 bg-white/80 px-2 py-1 rounded z-10">
+                            <div
+                                className="absolute bottom-2 left-2 text-xs text-gray-600 bg-white/80 px-2 py-1 rounded z-10">
                                 Preview
                             </div>
                         </div>

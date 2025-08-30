@@ -3,6 +3,7 @@ import {useTick} from "@pixi/react";
 import { useAvatarAnimation} from "@/components/avatar/useAvatarAnimation";
 import {useMemo} from "react";
 import {AvatarRenderInfo, PartTexture} from "@/app/avatar/types";
+import {AVATAR_SIZE} from "@/app/avatar/constants";
 
 
 interface IAvatarProps {
@@ -17,7 +18,7 @@ export const MyAvatar = ({avatarRenderInfo}: IAvatarProps) => {
         frameHeight: 64,
         totalFrames: 2,
         animationSpeed: 3,
-        outputSize: 192
+        outputSize: AVATAR_SIZE
     })
 
     useTick((delta) => {

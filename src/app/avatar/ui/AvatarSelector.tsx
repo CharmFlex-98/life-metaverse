@@ -35,6 +35,7 @@ export interface AvatarPartInfo {
 
 export type AvatarInfo = Partial<Record<AvatarPart, AvatarPartInfo>>
 
+
 const assetPath = "/assets/avatar/selection/"
 const groupByItem = (partInfoList: AvatarPartInfo[]) => {
     return partInfoList.reduce<Record<string, AvatarPartInfo[]>>((acc, current) => {
@@ -109,3 +110,7 @@ export function AvatarSelector({selectedPartInfo, partInfoList, placeholder, onS
         </DropdownMenu>
     )
 }
+
+type Pretty<T> = {
+    [K in keyof T]: T[K]
+} & {}

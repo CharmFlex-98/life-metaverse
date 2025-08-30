@@ -2,6 +2,7 @@
 import assetIndex from "../../assets/avatar/assetsIndex.json"
 import { Assets } from "pixi.js";
 import {useEffect, useState} from "react";
+import {base} from "next/dist/build/webpack/config/blocks/base";
 
 export function extractFilePaths(
     obj: unknown,
@@ -34,14 +35,17 @@ const usePreloadAssets = () => {
         let isCancelled = false;
 
         const animationPaths: string[] = [];
+        const cleanPaths: string[] = []
 
         extractFilePaths(assetIndex, (filePath) => {
             animationPaths.push(`/assets/avatar/animation/${filePath}`);
+            cleanPaths.push(filePath)
         });
 
-        animationPaths.forEach((path) => {
-            const index = Number(path.split("_")?.[0])
-            if (index) {
+        cleanPaths.forEach((path) => {
+            const basePath = path.split("/").pop()
+            const index = Number(basePath?.split("_")?.[0])
+            if (index && basePath) {
                 assetIdToAssetMap.set(index, path)
             }
         })
