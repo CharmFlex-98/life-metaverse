@@ -51,40 +51,56 @@ export async function networkClient<TBody, TResponse = unknown>(
     endpoint: string,
     { method = "GET", body, headers, cache, defaultErrorHandler = true }: HttpOptions<TBody> = {},
 ): Promise<LMResult<TResponse>> {
-    const res = await fetch(endpoint, {
-        method,
-        headers: {
-            "Content-Type": "application/json",
-            ...headers,
-        },
-        body: body ? JSON.stringify(body) : undefined,
-        cache, // Optional: lets you control caching in Next.js
-    });
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                ...headers,
+            },
+            body: body ? JSON.stringify(body) : undefined,
+            cache, // Optional: lets you control caching in Next.js
+        })
 
-    if (!res.ok) {
-        const errorBody = await res.json();
-        if ("errorCode" in errorBody && "errorMessage" in errorBody) {
-            if (defaultErrorHandler) {
-                toast.error(errorBody.errorMessage)
+        if (!res) return LMResult.error(new Error("Unknow error."))
+
+        if (!res.ok) {
+            const errorBody = await res.json();
+            if ("errorCode" in errorBody && "errorMessage" in errorBody) {
+                if (defaultErrorHandler) {
+                    toast.error(errorBody.errorMessage)
+                }
+                return LMResult.error(new HttpError(res.status, errorBody as ErrorBody))
             }
-            return LMResult.error(new HttpError(res.status, errorBody as ErrorBody))
+
+            const errorText = JSON.stringify(errorBody) ?? ErrorMessage.genericError
+
+            if (defaultErrorHandler) {
+                toast.error(errorText)
+            }
+            return LMResult.error(new Error(`HTTP ${res.status}: ${errorText}`))
         }
 
-        const errorText = JSON.stringify(errorBody) ?? ErrorMessage.genericError
+        const text = await res.text();
+        // Void
+        if (!text) {
+            return LMResult.ok(undefined as TResponse);
+        }
+
+        return LMResult.ok(JSON.parse(text) as TResponse);
+    } catch (error) {
+        if (error instanceof Error) {
+            if (defaultErrorHandler) {
+                toast.error(error.message)
+            }
+            return LMResult.error(error);
+        }
 
         if (defaultErrorHandler) {
-            toast.error(errorText)
+            toast.error("Unknown error. Please try again later")
         }
-        return LMResult.error(new Error(`HTTP ${res.status}: ${errorText}`))
+        return LMResult.error(new Error("Unknown error"))
     }
-
-    const text = await res.text();
-    // Void
-    if (!text) {
-        return LMResult.ok(undefined as TResponse);
-    }
-
-    return LMResult.ok(JSON.parse(text) as TResponse);
 }
 
 

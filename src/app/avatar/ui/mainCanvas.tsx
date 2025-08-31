@@ -63,12 +63,12 @@ function MainCanvas({
         // resizeObserver.observe(parentNode.current);
 
         // Also listen to window resize as fallback
-        window.addEventListener('resize', updateSize);
-
-        return () => {
-            // resizeObserver.disconnect();
-            window.removeEventListener('resize', updateSize);
-        };
+        // window.addEventListener('resize', updateSize);
+        //
+        // return () => {
+        //     // resizeObserver.disconnect();
+        //     window.removeEventListener('resize', updateSize);
+        // };
     }, [parentNode]);
 
     useEffect(() => {
@@ -105,7 +105,6 @@ function MainCanvas({
                 const randomX = Math.floor(Math.random() * canvasSize.width);
                 const randomY = Math.floor(Math.random() * canvasSize.height);
 
-                console.log("set avatar render info! " + avatar.name)
                 setAvatarRenderInfo((prev) => ({
                     ...prev,
                     [avatar.name]: {
@@ -147,8 +146,6 @@ function MainCanvas({
     return (
         <Application 
             resizeTo={parentNode}
-            // width={canvasSize.width}
-            // height={canvasSize.height}
         >
             {show && (
                 <pixiContainer>

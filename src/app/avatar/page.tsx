@@ -387,13 +387,3 @@ export default function AvatarCustomizer() {
         </div>
     )
 }
-
-type A = {
-    a?: string
-    b?: string
-}
-
-const a: A = { }
-Object.entries(a).forEach(([key, value]) => {
-    console.log("hey:: "+ key + " " + value)
-})

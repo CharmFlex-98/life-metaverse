@@ -36,7 +36,7 @@ export default function RootLayout({
         <ConfigProvider baseUrl={baseUrl}>
             <main>{children}</main>
         </ConfigProvider>
-        <Toaster />
+        <Toaster position="top-center" />
         </body>
         </html>
     );

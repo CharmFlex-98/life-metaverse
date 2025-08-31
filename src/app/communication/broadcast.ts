@@ -35,7 +35,7 @@ const createStompClient = (stompClientConfig: StompClientConfig): StompClient =>
         clientInstance = new Client({
             brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
-            debug: (str) => console.log("STOMP:", str),
+            debug: (str) => console.log("STOMP::", str),
         });
 
         clientInstance.onConnect = (frame) => {
