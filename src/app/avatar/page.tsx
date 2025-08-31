@@ -306,7 +306,7 @@ export default function AvatarCustomizer() {
                 <div
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 col flex flex-col items-center">
                     <Spinner variant="bars" className="text-red-400"/>
-                    <span className="text-black">Loading... {progress}%</span>
+                    <span className="text-orange-700">Loading... {progress}%</span>
                 </div>
             )}
 
