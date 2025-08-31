@@ -30,7 +30,7 @@ const createStompClient = (): StompClient => {
         const domain = process.env.SERVER_DOMAIN
 
         clientInstance = new Client({
-            brokerURL: domain ? `${domain}/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: domain ? `wss://${domain}/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
