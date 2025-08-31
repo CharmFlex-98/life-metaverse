@@ -33,7 +33,7 @@ const createStompClient = (stompClientConfig: StompClientConfig): StompClient =>
         if (clientInstance) return clientInstance;
 
         clientInstance = new Client({
-            brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
