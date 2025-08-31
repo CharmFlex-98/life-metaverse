@@ -6,7 +6,7 @@ function useBroadcast() {
     const [state, setState] = useState<ConnectionState>("disconnected")
     const stompClientRef = useRef<StompClient | null>(null);
     const configProvider = useConfigProvider();
-    
+
 
     if (!stompClientRef.current) {
         console.log("baseUrl:: " + configProvider.baseUrl)

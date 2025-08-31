@@ -124,7 +124,7 @@ function buildAvatarPartInfoMap() {
 const partInfoMap = buildAvatarPartInfoMap()
 const prefix = "/assets/avatar/animation/"
 
-const getUrl = (baseURl: string) => {
+const getUrl = (baseURl?: string) => {
     return baseURl ? `https://${baseURl}` : `http://${DEFAULT_DOMAIN_URL}`
 }
 
