@@ -124,7 +124,7 @@ const partInfoMap = buildAvatarPartInfoMap()
 const prefix = "/assets/avatar/animation/"
 
 const getUrl = (baseURl: string) => {
-    return baseURl ? `https://${baseURl}` : `https://localhost:8081`
+    return baseURl ? `https://${baseURl}` : `http://localhost:8081`
 }
 
 export default function AvatarCustomizer() {
