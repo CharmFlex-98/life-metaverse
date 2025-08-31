@@ -7,7 +7,6 @@ export type ConnectionState = "disconnected" | "connecting" | "connected" | "err
 
 interface StompClient {
     client: Client;
-    init: (baseUrl: string) => void;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
     publish: (destination: string, body: unknown) => boolean;
     connect: () => void;
@@ -16,7 +15,6 @@ interface StompClient {
 }
 
 let clientInstance: Client | null = null;
-let _baseUrl: string | undefined = undefined;
 let connectionState: ConnectionState = "disconnected";
 const connectionListeners: Set<(state: ConnectionState) => void> = new Set();
 let pendingSubscriptions: { topic: string; cb: (msg: IMessage) => void }[] = []; // ✅ queue
@@ -26,12 +24,16 @@ const updateConnectionState = (newState: ConnectionState) => {
     connectionListeners.forEach((listener) => listener(newState));
 };
 
-const createStompClient = (): StompClient => {
+export interface StompClientConfig {
+    baseUrl: string
+}
+
+const createStompClient = (stompClientConfig: StompClientConfig): StompClient => {
     const initializeClient = (): Client => {
         if (clientInstance) return clientInstance;
 
         clientInstance = new Client({
-            brokerURL: _baseUrl ? `wss://${_baseUrl}/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
@@ -64,10 +66,6 @@ const createStompClient = (): StompClient => {
 
         return clientInstance;
     };
-
-    const init = (baseUrl: string) => {
-        _baseUrl = baseUrl;
-    }
 
     const subscribe = (topic: string, callback: (message: IMessage) => void): () => void => {
         const client = initializeClient();
@@ -124,7 +122,6 @@ const createStompClient = (): StompClient => {
 
     return {
         client: initializeClient(),
-        init,
         subscribe,
         publish,
         connect,
@@ -133,4 +130,4 @@ const createStompClient = (): StompClient => {
     };
 };
 
-export const stompClient = createStompClient();
+export { createStompClient };
