@@ -1,12 +1,13 @@
 // app/communication/stomp-client.ts
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
 import {JsonValue} from "@/app/core/utils";
-import {SERVER_DOMAIN} from "@/app/communication/constant";
+import {useConfigProvider} from "@/app/ConfigProvider";
 
 export type ConnectionState = "disconnected" | "connecting" | "connected" | "error";
 
 interface StompClient {
     client: Client;
+    init: (baseUrl: string) => void;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
     publish: (destination: string, body: unknown) => boolean;
     connect: () => void;
@@ -15,6 +16,7 @@ interface StompClient {
 }
 
 let clientInstance: Client | null = null;
+let _baseUrl: string | undefined = undefined;
 let connectionState: ConnectionState = "disconnected";
 const connectionListeners: Set<(state: ConnectionState) => void> = new Set();
 let pendingSubscriptions: { topic: string; cb: (msg: IMessage) => void }[] = []; // ✅ queue
@@ -29,7 +31,7 @@ const createStompClient = (): StompClient => {
         if (clientInstance) return clientInstance;
 
         clientInstance = new Client({
-            brokerURL: SERVER_DOMAIN ? `wss://${SERVER_DOMAIN}/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: _baseUrl ? `wss://${_baseUrl}/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
@@ -62,6 +64,10 @@ const createStompClient = (): StompClient => {
 
         return clientInstance;
     };
+
+    const init = (baseUrl: string) => {
+        _baseUrl = baseUrl;
+    }
 
     const subscribe = (topic: string, callback: (message: IMessage) => void): () => void => {
         const client = initializeClient();
@@ -118,6 +124,7 @@ const createStompClient = (): StompClient => {
 
     return {
         client: initializeClient(),
+        init,
         subscribe,
         publish,
         connect,

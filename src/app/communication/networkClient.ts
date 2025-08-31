@@ -3,7 +3,6 @@ import {toast} from "sonner";
 import {rejects} from "node:assert";
 import {LMResult} from "@/app/core/result";
 import {ErrorMessage} from "@/app/avatar/constants";
-import {SERVER_DOMAIN} from "@/app/communication/constant";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -52,8 +51,7 @@ export async function networkClient<TBody, TResponse = unknown>(
     endpoint: string,
     { method = "GET", body, headers, cache, defaultErrorHandler = true }: HttpOptions<TBody> = {},
 ): Promise<LMResult<TResponse>> {
-    const BASE_URL = SERVER_DOMAIN ? `https://${SERVER_DOMAIN}` : "http://localhost:8081";
-    const res = await fetch(`${BASE_URL}${endpoint}`, {
+    const res = await fetch(endpoint, {
         method,
         headers: {
             "Content-Type": "application/json",

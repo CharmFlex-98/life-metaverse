@@ -35,6 +35,7 @@ import backgroundAsset from "../../../public/builder_bg.png";
 import {toast} from "sonner";
 import {Input} from "@/components/ui/input";
 import {httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
+import {useConfigProvider} from "@/app/ConfigProvider";
 
 
 type Gender = "male" | "female" | "unisex"
@@ -122,6 +123,10 @@ function buildAvatarPartInfoMap() {
 const partInfoMap = buildAvatarPartInfoMap()
 const prefix = "/assets/avatar/animation/"
 
+const getUrl = (baseURl: string) => {
+    return baseURl ? `https://${baseURl}` : `https://localhost:8081`
+}
+
 export default function AvatarCustomizer() {
     const canvasContainerRef = useRef<HTMLDivElement>(null)
     const previewContainerRef = useRef<HTMLDivElement>(null)
@@ -135,7 +140,7 @@ export default function AvatarCustomizer() {
     const {completed, progress} = usePreloadAssets()
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
     const [bannerMessages, setBannerMessages] = useState<string | null>(null)
-
+    const { baseUrl = "localhost:8081" } = useConfigProvider()
 
     const num = useRef(1)
 
@@ -157,7 +162,7 @@ export default function AvatarCustomizer() {
     }, []);
 
     useEffect(() => {
-        httpGet<BroadCastAvatarEventResponse[]>("/api/avatars/all", { defaultErrorHandler: false })
+        httpGet<BroadCastAvatarEventResponse[]>(`${getUrl(baseUrl)}/api/avatars/all`, { defaultErrorHandler: false })
             .then((res) => {
                 if (res.success) {
                     const allAvatars = res.data.map((value, index, array) => {
@@ -183,7 +188,7 @@ export default function AvatarCustomizer() {
         })
         const request = {name: avatarName, parts: Object.fromEntries(mapped)} as CreateAvatarRequest
         if (request) {
-            httpPost<typeof request, void>("/api/avatars/create", request, { defaultErrorHandler: false })
+            httpPost<typeof request, void>(`${getUrl(baseUrl)}/api/avatars/create`, request, { defaultErrorHandler: false })
                 .then((res) => {
                     if (res.success) {
                         setIsBuilderOpen(false)
