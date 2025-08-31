@@ -3,6 +3,7 @@ import {toast} from "sonner";
 import {rejects} from "node:assert";
 import {LMResult} from "@/app/core/result";
 import {ErrorMessage} from "@/app/avatar/constants";
+import {SERVER_DOMAIN} from "@/app/communication/constant";
 
 export type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -46,12 +47,12 @@ const defaultExceptionHandler = (error: unknown) => {
     return toast.error("Unknown error occurred. Please try again later.")
 }
 
-const BASE_URL = process.env.SERVER_DOMAIN ? `https://${process.env.SERVER_DOMAIN}` : "http://localhost:8081";
 
 export async function networkClient<TBody, TResponse = unknown>(
     endpoint: string,
     { method = "GET", body, headers, cache, defaultErrorHandler = true }: HttpOptions<TBody> = {},
 ): Promise<LMResult<TResponse>> {
+    const BASE_URL = SERVER_DOMAIN ? `https://${SERVER_DOMAIN}` : "http://localhost:8081";
     const res = await fetch(`${BASE_URL}${endpoint}`, {
         method,
         headers: {
@@ -61,8 +62,6 @@ export async function networkClient<TBody, TResponse = unknown>(
         body: body ? JSON.stringify(body) : undefined,
         cache, // Optional: lets you control caching in Next.js
     });
-
-    console.log("res is: " + JSON.stringify(res))
 
     if (!res.ok) {
         const errorBody = await res.json();

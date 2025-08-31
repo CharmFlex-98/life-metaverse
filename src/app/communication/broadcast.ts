@@ -1,6 +1,7 @@
 // app/communication/stomp-client.ts
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
 import {JsonValue} from "@/app/core/utils";
+import {SERVER_DOMAIN} from "@/app/communication/constant";
 
 export type ConnectionState = "disconnected" | "connecting" | "connected" | "error";
 
@@ -27,10 +28,8 @@ const createStompClient = (): StompClient => {
     const initializeClient = (): Client => {
         if (clientInstance) return clientInstance;
 
-        const domain = process.env.SERVER_DOMAIN
-
         clientInstance = new Client({
-            brokerURL: domain ? `wss://${domain}/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: SERVER_DOMAIN ? `wss://${SERVER_DOMAIN}/ws-avatar` : "ws://localhost:8081/ws-avatar",
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
