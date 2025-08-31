@@ -44,7 +44,7 @@ function AvatarPreview({parentNode, background, avatarBuilderPartFileName}: Avat
     // Load avatar parts
     useEffect(() => {
         const tasks: Promise<void>[] = []
-        setComponent({})
+        setComponent({background: component.background})
 
         // Load avatar parts
         Object.entries(avatarBuilderPartFileName).forEach(([part, fileName]) => {
