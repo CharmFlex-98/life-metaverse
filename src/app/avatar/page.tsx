@@ -34,7 +34,7 @@ import AvatarPreview from "@/app/avatar/ui/AvatarPreview";
 import backgroundAsset from "../../../public/builder_bg.png";
 import {toast} from "sonner";
 import {Input} from "@/components/ui/input";
-import {httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
+import {HttpError, httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
 import {useConfigProvider} from "@/app/ConfigProvider";
 
 
@@ -194,6 +194,11 @@ export default function AvatarCustomizer() {
                         setIsBuilderOpen(false)
                         toast.success("Avatar created successfully!")
                         return
+                    }
+
+                    if (res.error && res.error) {
+                        toast.error(res.error.message)
+                        return;
                     }
 
                     toast.error("Cannot create avatar. Please try again later.")
