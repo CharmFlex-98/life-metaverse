@@ -3,7 +3,7 @@ import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
 import {Toaster} from "sonner";
 import {ConfigProvider} from "@/app/ConfigProvider";
-import {Config} from "@/app/constants";
+import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -28,7 +28,7 @@ export default function RootLayout({
                                    }: Readonly<{
     children: React.ReactNode;
 }>) {
-    const baseUrl = process.env.SERVER_DOMAIN ?? "localhost:8081"
+    const baseUrl = process.env.SERVER_DOMAIN
 
     return (
         <html lang="en">

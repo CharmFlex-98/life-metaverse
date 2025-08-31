@@ -2,7 +2,7 @@
 import {createContext, PropsWithChildren, useContext} from "react";
 
 interface Config {
-    baseUrl: string
+    baseUrl?: string
 }
 
 const ConfigContext = createContext<Config | undefined>(undefined);

@@ -36,6 +36,7 @@ import {toast} from "sonner";
 import {Input} from "@/components/ui/input";
 import {HttpError, httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
 import {useConfigProvider} from "@/app/ConfigProvider";
+import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
 
 
 type Gender = "male" | "female" | "unisex"
@@ -124,7 +125,7 @@ const partInfoMap = buildAvatarPartInfoMap()
 const prefix = "/assets/avatar/animation/"
 
 const getUrl = (baseURl: string) => {
-    return baseURl ? `https://${baseURl}` : `http://localhost:8081`
+    return baseURl ? `https://${baseURl}` : `http://${DEFAULT_DOMAIN_URL}`
 }
 
 export default function AvatarCustomizer() {
@@ -140,7 +141,7 @@ export default function AvatarCustomizer() {
     const {completed, progress} = usePreloadAssets()
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
     const [bannerMessages, setBannerMessages] = useState<string | null>(null)
-    const { baseUrl = "localhost:8081" } = useConfigProvider()
+    const { baseUrl } = useConfigProvider()
 
     const num = useRef(1)
 

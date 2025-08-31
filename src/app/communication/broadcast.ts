@@ -2,10 +2,11 @@
 import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
 import {JsonValue} from "@/app/core/utils";
 import {useConfigProvider} from "@/app/ConfigProvider";
+import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
 
 export type ConnectionState = "disconnected" | "connecting" | "connected" | "error";
 
-interface StompClient {
+export interface StompClient {
     client: Client;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
     publish: (destination: string, body: unknown) => boolean;
@@ -25,7 +26,7 @@ const updateConnectionState = (newState: ConnectionState) => {
 };
 
 export interface StompClientConfig {
-    baseUrl: string
+    baseUrl?: string
 }
 
 const createStompClient = (stompClientConfig: StompClientConfig): StompClient => {
@@ -33,7 +34,7 @@ const createStompClient = (stompClientConfig: StompClientConfig): StompClient =>
         if (clientInstance) return clientInstance;
 
         clientInstance = new Client({
-            brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : "ws://localhost:8081/ws-avatar",
+            brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : `ws://${DEFAULT_DOMAIN_URL}/ws-avatar`,
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP::", str),
         });
