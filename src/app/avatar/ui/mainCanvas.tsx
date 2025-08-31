@@ -132,7 +132,7 @@ function MainCanvas({
                         y={renderInfo.position.y - AVATAR_SIZE / 2}
                         style={{
                             fill: "white",
-                            fontSize: 11,
+                            fontSize: 14,
                             fontWeight: "bold",
                             stroke: "black",
                         }}
