@@ -17,7 +17,7 @@ import {
     AvatarGender,
     AvatarImportConfig,
     AvatarPart,
-    BroadCastAvatarEventResponse,
+    BroadCastAvatarEventResponse, BroadcastMetaDataEventResponse,
     CreateAvatarRequest
 } from "@/app/avatar/types";
 import {AvatarInfo, AvatarPartInfo, AvatarSelector} from "@/app/avatar/ui/AvatarSelector";
@@ -142,12 +142,13 @@ export default function AvatarCustomizer() {
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
     const [bannerMessages, setBannerMessages] = useState<string | null>(null)
     const { baseUrl } = useConfigProvider()
+    const [ onlineCount, setOnlineCount ] = useState<number | null>(null)
 
     const num = useRef(1)
 
     /*Initialize STOMP server*/
     useEffect(() => {
-        const unsubscribe = stompClient.subscribe("/topic/avatars", (message: IMessage) => {
+        const unsubscribeAvatarTopic = stompClient.subscribe("/topic/avatars", (message: IMessage) => {
             if (message.body) {
                 const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
                 const parts = res.parts
@@ -158,8 +159,17 @@ export default function AvatarCustomizer() {
                 setAvatarCreated((prev) => [...prev, {...mapped, name: res.name} as AvatarCreated])
             }
         })
+        const unsubscribeOnlineCountTopic = stompClient.subscribe("/topic/session_metadata", (message: IMessage) => {
+            if (message.body) {
+                const res = JSON.parse(message.body) as BroadcastMetaDataEventResponse
+                setOnlineCount(res.onlineCount)
+            }
+        })
 
-        return () => unsubscribe()
+        return () => {
+            unsubscribeAvatarTopic()
+            unsubscribeOnlineCountTopic()
+        }
     }, []);
 
     useEffect(() => {
@@ -299,6 +309,10 @@ export default function AvatarCustomizer() {
                             show={show}
                             avatarCreated={avatarCreated}
                 />
+            </div>
+
+            <div className="absolute top-0 left-0 m-4 px-4 py-2 bg-black/60 text-white text-lg font-light rounded-lg shadow-lg">
+                online count: { onlineCount !== null ? `${onlineCount} humans` : "evaluating" }
             </div>
 
 

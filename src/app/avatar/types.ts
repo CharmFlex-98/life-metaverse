@@ -47,4 +47,7 @@ export interface CreateAvatarRequest {
 }
 
 export type BroadCastAvatarEventResponse = CreateAvatarRequest
+export interface BroadcastMetaDataEventResponse {
+    onlineCount: number
+}
 
