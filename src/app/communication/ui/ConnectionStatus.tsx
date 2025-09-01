@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { useEffect, useState } from "react"
-import { ConnectionState } from "@/app/communication/broadcast"
+import { ConnectionState } from "@/app/communication/websocketClient"
 import { motion, AnimatePresence } from "framer-motion"
 import { Link, Link2Off, Zap, Users, Wifi, WifiOff, Sparkles, Heart, Radio } from "lucide-react"
 
@@ -49,7 +49,7 @@ export function ConnectionStatus({ connectionState, onlineCount, className }: Co
                     iconColor: 'text-emerald-600 dark:text-emerald-400',
                     borderColor: 'border-emerald-300/50 dark:border-emerald-700/50',
                     shadowColor: 'shadow-emerald-500/20',
-                    funMessage: ['All systems go! 🚀', 'Vibing online! ✨', 'Connected & thriving! 🌟'][Math.floor(Math.random() * 3)]
+                    funMessage: 'Connected & thriving! 🌟'
                 }
             case 'connecting':
                 return {
@@ -271,7 +271,7 @@ export function ConnectionStatus({ connectionState, onlineCount, className }: Co
 
                         {/* Enhanced fun status messages with typing effect */}
                         <motion.div
-                            className="text-sm font-medium text-gray-800 dark:text-gray-300 max-w-[200px]"
+                            className="text-sm font-medium text-gray-900 dark:text-gray-300 max-w-[200px]"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3, duration: 0.4 }}
@@ -361,14 +361,12 @@ export function ConnectionStatus({ connectionState, onlineCount, className }: Co
                                     scale: 0,
                                     x: "50%",
                                     y: "50%",
-                                    rotate: Math.random() * 360
                                 }}
                                 animate={{
                                     opacity: [0, 1, 1, 0],
                                     scale: [0, 1.5, 1, 0],
-                                    x: `${50 + (Math.random() - 0.5) * 300}%`,
-                                    y: `${50 + (Math.random() - 0.5) * 300}%`,
-                                    rotate: Math.random() * 720
+                                    x: `${50 * 300}%`,
+                                    y: `${50 * 300}%`,
                                 }}
                                 transition={{
                                     duration: 2,

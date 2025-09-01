@@ -1,5 +1,5 @@
 import {ConnectionStatus} from "@/app/communication/ui/ConnectionStatus";
-import {ConnectionState} from "@/app/communication/broadcast";
+import {ConnectionState} from "@/app/communication/websocketClient";
 
 interface HeaderProps {
     connectionState: ConnectionState

@@ -36,9 +36,8 @@ import {Input} from "@/components/ui/input";
 import {HttpError, httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
 import {useConfigProvider} from "@/app/ConfigProvider";
 import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
-import {useConnectionStatus} from "@/app/communication/hooks/useConnectionStatus";
 import {Header} from "@/app/avatar/ui/Header";
-import {useWebSocketService} from "@/app/communication/broadcast";
+import {useBroadcast} from "@/app/communication/hooks/useWebSocketService";
 
 
 type Gender = "male" | "female" | "unisex"
@@ -138,20 +137,18 @@ export default function AvatarCustomizer() {
     const [previewComponent, setPreviewComponent] = useState<ComponentTexture>({})
     const [gender, setGender] = useState<Gender>("male")
     const [show, setShow] = useState(false)
-    const { subscribe } = useWebSocketService()
     const [avatarCreated, setAvatarCreated] = useState<AvatarCreated[]>([])
     const {completed, progress} = usePreloadAssets()
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
-    const [bannerMessages, setBannerMessages] = useState<string | null>(null)
     const { baseUrl } = useConfigProvider()
-
-    const { connectionState, isConnected, onlineCount } = useConnectionStatus()
+    const [onlineCount, setOnlineCount] = useState<number>(0)
+    const { state: connectionState, wsClient } = useBroadcast()
 
 
     /*Initialize STOMP server*/
     useEffect(() => {
         if (connectionState === 'connected') {
-            const unsubscribeAvatarTopic = subscribe("/topic/avatars", (message: IMessage) => {
+            const unsubscribeAvatarTopic = wsClient.subscribe("/topic/avatars", (message: IMessage) => {
                 if (message.body) {
                     const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
                     const parts = res.parts
@@ -163,11 +160,22 @@ export default function AvatarCustomizer() {
                 }
             })
 
+            const unsubscribeSessionMetaDataTopic = wsClient.subscribe('/topic/session_metadata', (message) => {
+                if (message.body) {
+                    const res = JSON.parse(message.body) as BroadcastMetaDataEventResponse
+                    const count = Number(res.onlineCount)
+                    if (!isNaN(count)) {
+                        setOnlineCount(count)
+                    }
+                }
+            })
+
             return () => {
                 unsubscribeAvatarTopic()
+                unsubscribeSessionMetaDataTopic()
             }
         }
-    }, [subscribe, connectionState]);
+    }, [connectionState, wsClient]);
 
     useEffect(() => {
         httpGet<BroadCastAvatarEventResponse[]>(`${getUrl(baseUrl)}/api/avatars/all`, { defaultErrorHandler: false })
