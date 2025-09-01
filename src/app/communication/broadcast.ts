@@ -1,89 +1,110 @@
 // app/communication/stomp-client.ts
-import { Client, IMessage, StompSubscription } from "@stomp/stompjs";
-import {JsonValue} from "@/app/core/utils";
+import {Client, IMessage, StompSubscription} from "@stomp/stompjs";
 import {useConfigProvider} from "@/app/ConfigProvider";
 import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 
 export type ConnectionState = "disconnected" | "connecting" | "connected" | "error";
 
-export interface StompClient {
-    client: Client;
+export interface WebSocketService {
+    connectionState: ConnectionState;
     subscribe: (topic: string, callback: (message: IMessage) => void) => () => void;
     publish: (destination: string, body: unknown) => boolean;
-    connect: () => void;
-    disconnect: () => void;
-    onConnectionChange: (listener: (state: ConnectionState) => void) => () => void;
 }
 
-let clientInstance: Client | null = null;
-let connectionState: ConnectionState = "disconnected";
-const connectionListeners: Set<(state: ConnectionState) => void> = new Set();
-let pendingSubscriptions: { topic: string; cb: (msg: IMessage) => void }[] = []; // ✅ queue
 
-const updateConnectionState = (newState: ConnectionState) => {
-    connectionState = newState;
-    connectionListeners.forEach((listener) => listener(newState));
-};
-
-export interface StompClientConfig {
-    baseUrl?: string
+interface Subscription {
+    topic: string
+    callback: (message: any) => void
 }
 
-const createStompClient = (stompClientConfig: StompClientConfig): StompClient => {
-    const initializeClient = (): Client => {
-        if (clientInstance) return clientInstance;
+const useWebSocketService = (): WebSocketService => {
+    const clientRef = useRef<Client | null>(null)
+    const [connectionState, setConnectionState] = useState<ConnectionState>('disconnected');
+    const pendingSubscriptionsRef = useRef<Subscription[]>([]); // ✅ queue
+    const stompClientConfig = useConfigProvider()
 
-        clientInstance = new Client({
+    const createClient = useCallback(() => {
+        console.log("creating client...")
+
+        const newClient = new Client({
             brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : `ws://${DEFAULT_DOMAIN_URL}/api/ws-avatar`,
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP::", str),
         });
 
-        clientInstance.onConnect = (frame) => {
+        newClient.onConnect = (frame) => {
             console.log("Connected!", frame);
-            updateConnectionState("connected");
+            setConnectionState("connected");
 
             // ✅ flush queued subscriptions
-            pendingSubscriptions.forEach(({ topic, cb }) => {
-                clientInstance?.subscribe(topic, cb);
+            const pendingSubscriptions = pendingSubscriptionsRef.current
+            pendingSubscriptions.forEach(({ topic, callback }) => {
+                newClient?.subscribe(topic, callback);
             });
-            pendingSubscriptions = [];
+            pendingSubscriptionsRef.current = [];
         };
 
-        clientInstance.onStompError = (frame) => {
+        newClient.onStompError = (frame) => {
             console.error("STOMP Error:", frame.headers["message"], frame.body);
-            updateConnectionState("error");
+            setConnectionState("error");
         };
 
-        clientInstance.onWebSocketError = (event) => {
+        newClient.onWebSocketError = (event) => {
             console.error("WebSocket error:", event);
-            updateConnectionState("error");
+            setConnectionState("error");
         };
 
-        clientInstance.onDisconnect = () => {
+        newClient.onDisconnect = () => {
             console.log("Disconnected");
-            updateConnectionState("disconnected");
+            setConnectionState("disconnected");
         };
 
-        return clientInstance;
-    };
+        newClient.onWebSocketClose = (event) => {
+            console.log("Web Socket Closed");
+            setConnectionState("disconnected");
+        }
 
-    const subscribe = (topic: string, callback: (message: IMessage) => void): () => void => {
-        const client = initializeClient();
+        console.log("✅Completed creating client")
 
-        if (connectionState !== "connected") {
+        newClient.activate()
+        clientRef.current = newClient;
+
+        return newClient
+    }, [stompClientConfig.baseUrl])
+
+    useEffect(() => {
+        clientRef.current = null
+        const client = createClient()
+
+        return () => {
+            client.deactivate().then(() => {
+                console.log("Client is destroyed.");
+            })
+            setConnectionState("disconnected");
+        }
+    }, [createClient])
+
+
+    const subscribe = useCallback((topic: string, callback: (message: IMessage) => void): () => void => {
+        const client = clientRef.current;
+
+        if (!client || connectionState !== "connected") {
             // ✅ queue until connected
-            pendingSubscriptions.push({ topic, cb: callback });
+            const pendingSubscriptions = pendingSubscriptionsRef.current;
+            pendingSubscriptions.push({ topic, callback: callback });
             return () => {
-                pendingSubscriptions = pendingSubscriptions.filter((s) => s.cb !== callback);
+                pendingSubscriptionsRef.current = pendingSubscriptions.filter((s) => s.callback !== callback);
             };
         }
 
         const subscription: StompSubscription = client.subscribe(topic, callback);
         return () => subscription.unsubscribe();
-    };
+    }, [createClient]);
 
-    const publish = (destination: string, body: unknown): boolean => {
+    const publish = useCallback((destination: string, body: unknown): boolean => {
+        const clientInstance = clientRef.current;
+
         if (!clientInstance || connectionState !== "connected") {
             console.warn("Cannot publish - client not connected");
             return false;
@@ -95,40 +116,14 @@ const createStompClient = (stompClientConfig: StompClientConfig): StompClient =>
             console.error("Failed to publish message:", error);
             return false;
         }
-    };
+    }, [createClient]);
 
-    const connect = () => {
-        const client = initializeClient();
-        if (connectionState === "disconnected") {
-            updateConnectionState("connecting");
-            client.activate();
-        }
-    };
-
-    const disconnect = () => {
-        if (clientInstance) {
-            clientInstance.deactivate();
-            clientInstance = null;
-            updateConnectionState("disconnected");
-        }
-    };
-
-    const onConnectionChange = (listener: (state: ConnectionState) => void): (() => void) => {
-        connectionListeners.add(listener);
-        return () => connectionListeners.delete(listener);
-    };
-
-    // auto-connect
-    connect();
 
     return {
-        client: initializeClient(),
+        connectionState,
         subscribe,
         publish,
-        connect,
-        disconnect,
-        onConnectionChange,
     };
 };
 
-export { createStompClient };
+export { useWebSocketService };

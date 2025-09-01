@@ -22,7 +22,6 @@ import {
 } from "@/app/avatar/types";
 import {AvatarInfo, AvatarPartInfo, AvatarSelector} from "@/app/avatar/ui/AvatarSelector";
 import {Spinner} from "@/components/ui/shadcn-io/spinner";
-import {useBroadcast} from "@/app/communication/useSubscribeEvent";
 import {IMessage} from "@stomp/stompjs";
 import {getById, usePreloadAssets} from "@/app/core/preload";
 import {PreloadAvatarAssets} from "@/app/avatar/Preload";
@@ -37,6 +36,9 @@ import {Input} from "@/components/ui/input";
 import {HttpError, httpGet, httpPost, networkClient} from "@/app/communication/networkClient";
 import {useConfigProvider} from "@/app/ConfigProvider";
 import {DEFAULT_DOMAIN_URL} from "@/app/avatar/constants";
+import {useConnectionStatus} from "@/app/communication/hooks/useConnectionStatus";
+import {Header} from "@/app/avatar/ui/Header";
+import {useWebSocketService} from "@/app/communication/broadcast";
 
 
 type Gender = "male" | "female" | "unisex"
@@ -136,19 +138,19 @@ export default function AvatarCustomizer() {
     const [previewComponent, setPreviewComponent] = useState<ComponentTexture>({})
     const [gender, setGender] = useState<Gender>("male")
     const [show, setShow] = useState(false)
-    const {state, stompClient} = useBroadcast()
+    const { subscribe } = useWebSocketService()
     const [avatarCreated, setAvatarCreated] = useState<AvatarCreated[]>([])
     const {completed, progress} = usePreloadAssets()
     const [isBuilderOpen, setIsBuilderOpen] = useState(false)
     const [bannerMessages, setBannerMessages] = useState<string | null>(null)
     const { baseUrl } = useConfigProvider()
-    const [ onlineCount, setOnlineCount ] = useState<number | null>(null)
 
-    const num = useRef(1)
+    const { connectionState, isConnected, onlineCount } = useConnectionStatus()
+
 
     /*Initialize STOMP server*/
     useEffect(() => {
-        const unsubscribeAvatarTopic = stompClient.subscribe("/topic/avatars", (message: IMessage) => {
+        const unsubscribeAvatarTopic = subscribe("/topic/avatars", (message: IMessage) => {
             if (message.body) {
                 const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
                 const parts = res.parts
@@ -159,18 +161,11 @@ export default function AvatarCustomizer() {
                 setAvatarCreated((prev) => [...prev, {...mapped, name: res.name} as AvatarCreated])
             }
         })
-        const unsubscribeOnlineCountTopic = stompClient.subscribe("/topic/session_metadata", (message: IMessage) => {
-            if (message.body) {
-                const res = JSON.parse(message.body) as BroadcastMetaDataEventResponse
-                setOnlineCount(res.onlineCount)
-            }
-        })
 
         return () => {
             unsubscribeAvatarTopic()
-            unsubscribeOnlineCountTopic()
         }
-    }, []);
+    }, [subscribe]);
 
     useEffect(() => {
         httpGet<BroadCastAvatarEventResponse[]>(`${getUrl(baseUrl)}/api/avatars/all`, { defaultErrorHandler: false })
@@ -301,7 +296,8 @@ export default function AvatarCustomizer() {
 
     return (
         <div className="relative h-screen w-screen">
-            {/*<PreloadAvatarAssets />*/}
+            {/* Connection Alert at the top */}
+            <Header connectionState={connectionState} onlineCount={onlineCount} />
             {/* Canvas fills the background */}
             <div ref={canvasContainerRef} className="h-full w-full">
                 <MainCanvas parentNode={canvasContainerRef}
@@ -310,11 +306,6 @@ export default function AvatarCustomizer() {
                             avatarCreated={avatarCreated}
                 />
             </div>
-
-            <div className="absolute top-0 left-0 m-4 px-4 py-2 bg-black/60 text-white text-lg font-light rounded-lg shadow-lg">
-                online count: { onlineCount !== null ? `${onlineCount} humans` : "evaluating" }
-            </div>
-
 
             {/* Loader*/}
             {!show && (
