@@ -28,7 +28,7 @@ const createStompClient = (baseUrl?: string): WebSocketClient => {
         if (clientInstance) return clientInstance;
 
         clientInstance = new Client({
-            brokerURL: baseUrl || `ws://${DEFAULT_DOMAIN_URL}/api/ws-avatar`,
+            brokerURL: baseUrl ? `wss://${baseUrl}/api/ws-avatar` : `ws://${DEFAULT_DOMAIN_URL}/api/ws-avatar`,
             reconnectDelay: 5000,
             debug: (str) => console.log("STOMP:", str),
         });
