@@ -24,9 +24,12 @@ const useWebSocketService = (): WebSocketService => {
     const pendingSubscriptionsRef = useRef<Subscription[]>([]); // ✅ queue
     const stompClientConfig = useConfigProvider()
 
-    const createClient = useCallback(() => {
-        console.log("creating client...")
+    const createClient = useCallback((force: boolean = true) => {
+        if (clientRef.current && !force) {
+            return clientRef.current
+        }
 
+        console.log("🚀 creating client.....")
         const newClient = new Client({
             brokerURL: stompClientConfig.baseUrl ? `wss://${stompClientConfig.baseUrl}/api/ws-avatar` : `ws://${DEFAULT_DOMAIN_URL}/api/ws-avatar`,
             reconnectDelay: 5000,
@@ -34,7 +37,6 @@ const useWebSocketService = (): WebSocketService => {
         });
 
         newClient.onConnect = (frame) => {
-            console.log("Connected!", frame);
             setConnectionState("connected");
 
             // ✅ flush queued subscriptions
@@ -73,21 +75,22 @@ const useWebSocketService = (): WebSocketService => {
         return newClient
     }, [stompClientConfig.baseUrl])
 
+
     useEffect(() => {
-        clientRef.current = null
         const client = createClient()
 
         return () => {
             client.deactivate().then(() => {
-                console.log("Client is destroyed.");
+                console.log("Client is destroyed");
             })
+            clientRef.current = null
             setConnectionState("disconnected");
         }
     }, [createClient])
 
 
     const subscribe = useCallback((topic: string, callback: (message: IMessage) => void): () => void => {
-        const client = clientRef.current;
+        const client = createClient(false);
 
         if (!client || connectionState !== "connected") {
             // ✅ queue until connected
@@ -97,10 +100,9 @@ const useWebSocketService = (): WebSocketService => {
                 pendingSubscriptionsRef.current = pendingSubscriptions.filter((s) => s.callback !== callback);
             };
         }
-
         const subscription: StompSubscription = client.subscribe(topic, callback);
         return () => subscription.unsubscribe();
-    }, [createClient]);
+    }, [createClient, connectionState]);
 
     const publish = useCallback((destination: string, body: unknown): boolean => {
         const clientInstance = clientRef.current;
@@ -116,7 +118,7 @@ const useWebSocketService = (): WebSocketService => {
             console.error("Failed to publish message:", error);
             return false;
         }
-    }, [createClient]);
+    }, [createClient, connectionState]);
 
 
     return {

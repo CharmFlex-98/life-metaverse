@@ -150,22 +150,24 @@ export default function AvatarCustomizer() {
 
     /*Initialize STOMP server*/
     useEffect(() => {
-        const unsubscribeAvatarTopic = subscribe("/topic/avatars", (message: IMessage) => {
-            if (message.body) {
-                const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
-                const parts = res.parts
-                const paths = Object.entries(parts).map(([key, value]) => {
-                    return [key, getById(value.id)]
-                })
-                const mapped = Object.fromEntries(paths) as AvatarPartUrlMap
-                setAvatarCreated((prev) => [...prev, {...mapped, name: res.name} as AvatarCreated])
-            }
-        })
+        if (connectionState === 'connected') {
+            const unsubscribeAvatarTopic = subscribe("/topic/avatars", (message: IMessage) => {
+                if (message.body) {
+                    const res = {...JSON.parse(message.body)} as BroadCastAvatarEventResponse
+                    const parts = res.parts
+                    const paths = Object.entries(parts).map(([key, value]) => {
+                        return [key, getById(value.id)]
+                    })
+                    const mapped = Object.fromEntries(paths) as AvatarPartUrlMap
+                    setAvatarCreated((prev) => [...prev, {...mapped, name: res.name} as AvatarCreated])
+                }
+            })
 
-        return () => {
-            unsubscribeAvatarTopic()
+            return () => {
+                unsubscribeAvatarTopic()
+            }
         }
-    }, [subscribe]);
+    }, [subscribe, connectionState]);
 
     useEffect(() => {
         httpGet<BroadCastAvatarEventResponse[]>(`${getUrl(baseUrl)}/api/avatars/all`, { defaultErrorHandler: false })

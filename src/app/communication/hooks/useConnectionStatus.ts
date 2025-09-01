@@ -8,18 +8,20 @@ function useConnectionStatus() {
 
     // Subscribe to online count
     useEffect(() => {
-        const unsubscribe = subscribe('/topic/session_metadata', (message) => {
-            if (message.body) {
-                const res = JSON.parse(message.body) as BroadcastMetaDataEventResponse
-                const count = Number(res.onlineCount)
-                if (!isNaN(count)) {
-                    setOnlineCount(count)
+        if (state === 'connected') {
+            const unsubscribe = subscribe('/topic/session_metadata', (message) => {
+                if (message.body) {
+                    const res = JSON.parse(message.body) as BroadcastMetaDataEventResponse
+                    const count = Number(res.onlineCount)
+                    if (!isNaN(count)) {
+                        setOnlineCount(count)
+                    }
                 }
-            }
-        })
+            })
+            return () => unsubscribe()
+        }
 
-        return () => unsubscribe()
-    }, [subscribe])
+    }, [subscribe, state])
 
     return {
         connectionState: state,
