@@ -15,7 +15,7 @@ export interface WebSocketService {
 
 interface Subscription {
     topic: string
-    callback: (message: any) => void
+    callback: (message: IMessage) => void
 }
 
 const useWebSocketService = (): WebSocketService => {
